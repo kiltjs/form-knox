@@ -65,7 +65,7 @@ function formSubmit (form, onSubmit, options) {
   }, true);
 }
 
-function formKnox (createMask, _env) {
+function formKnox (_env, createMask) {
   var formats = {},
       env = _env || {},
       error_messages = {};
