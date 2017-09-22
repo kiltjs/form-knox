@@ -42,12 +42,26 @@ function formSubmitNoValidate (form, valid, e) {
   }
 }
 
-function formSubmit (form, onSubmit, options) {
+function _remove (list, item) {
+  for( var i = list.length - 1 ; i >= 0 ; i-- ) {
+    if( list[i] === item ) return list.splice(i, 1);
+  }
+}
+
+function runListeners (listeners, args, this_arg) {
+  for( var i = 0, n = listeners.length ; i < n ; i++ ) {
+    listeners[i].apply(this_arg, args);
+  }
+}
+
+function formBind (form, onSubmit, options) {
   options = options || {};
   if( !(onSubmit instanceof Function) ) {
     options = onSubmit || options;
     onSubmit = _noop;
   }
+
+  var listeners = { valid: [], invalid: [], reset: [] };
 
   if( options.novalidate ) form.setAttribute('novalidate', 'novalidate');
 
@@ -73,6 +87,8 @@ function formSubmit (form, onSubmit, options) {
       }
     }, 0);
 
+    runListeners( listeners[ valid ? 'valid' : 'invalid' ], [], form);
+
     if( !valid ) return;
 
     if( options.focus_invalid !== false && form.querySelector(':invalid') ) {
@@ -81,6 +97,30 @@ function formSubmit (form, onSubmit, options) {
 
     onSubmit(e);
   }, true);
+
+  form.addEventListener('reset', function () {
+    runListeners( listeners[ form.checkValidity() ? 'valid' : 'invalid' ], [], form);
+  });
+
+  var instance = {
+    form: form,
+    on: function (event_name, listener, use_capture) {
+      if( listeners[event_name] ) listeners[event_name].push(listener);
+      else form.addEventListener(event_name, listener, use_capture);
+      return instance;
+    },
+    off: function (event_name, listener, use_capture) {
+      if( listeners[event_name] ) _remove(listeners[event_name], listener);
+      else form.removeEventListener(event_name, listener, use_capture);
+      return instance;
+    },
+  };
+
+  Object.defineProperty(instance, 'data', {
+    get: function () { return formParams(form); }
+  });
+
+  return instance;
 }
 
 function formKnox (_env, createMask) {
@@ -111,7 +151,7 @@ function formKnox (_env, createMask) {
     return formats[format_name];
   };
 
-  env.submit = formSubmit;
+  env.form = formBind;
   env.params = formParams;
 
   return env;
@@ -133,7 +173,9 @@ var _noop = function () {},
     };
 
 // https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5/Constraint_validation
+// https://developer.mozilla.org/en-US/docs/Learn/HTML/Forms/HTML5_updates#Constraint_Validation_API
 // https://developer.mozilla.org/es/docs/Web/API/ValidityState
+
 function getValidityError (validity) {
   for( var key in validity ) {
     if( validity[key] ) return key.replace(/([a-z])([A-Z])/g, function (_matched, a, b) {
@@ -199,22 +241,27 @@ module.exports = function input (input, options) {
   input.addEventListener( is_android ? 'keyup' : 'input' , onInput, options.useCapture );
   input.addEventListener('blur' , onBlur, options.useCapture );
 
-  return {
+  var instance = {
     on: function (event_name, listener, use_capture) {
-      if( listeners[event_name] ) return listeners[event_name].push(listener);
-      input.addEventListener(event_name, listener, use_capture);
+      if( listeners[event_name] ) listeners[event_name].push(listener);
+      else input.addEventListener(event_name, listener, use_capture);
+      return instance;
     },
     off: function (event_name, listener, use_capture) {
-      if( listeners[event_name] ) return _remove(listeners[event_name], listener);
-      input.removeEventListener(event_name, listener, use_capture);
+      if( listeners[event_name] ) _remove(listeners[event_name], listener);
+      else input.removeEventListener(event_name, listener, use_capture);
+      return instance;
     },
     input: input,
     checkValidity: checkValidity,
     unbind: function () {
       input.removeEventListener( is_android ? 'keyup' : 'input' , onInput, options.useCapture );
       input.removeEventListener('blur' , onBlur, options.useCapture );
+      return instance;
     }
   };
+
+  return instance;
 };
 
 },{}],4:[function(require,module,exports){

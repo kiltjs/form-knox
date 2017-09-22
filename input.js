@@ -9,7 +9,9 @@ var _noop = function () {},
     };
 
 // https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5/Constraint_validation
+// https://developer.mozilla.org/en-US/docs/Learn/HTML/Forms/HTML5_updates#Constraint_Validation_API
 // https://developer.mozilla.org/es/docs/Web/API/ValidityState
+
 function getValidityError (validity) {
   for( var key in validity ) {
     if( validity[key] ) return key.replace(/([a-z])([A-Z])/g, function (_matched, a, b) {
@@ -75,20 +77,25 @@ module.exports = function input (input, options) {
   input.addEventListener( is_android ? 'keyup' : 'input' , onInput, options.useCapture );
   input.addEventListener('blur' , onBlur, options.useCapture );
 
-  return {
+  var instance = {
     on: function (event_name, listener, use_capture) {
-      if( listeners[event_name] ) return listeners[event_name].push(listener);
-      input.addEventListener(event_name, listener, use_capture);
+      if( listeners[event_name] ) listeners[event_name].push(listener);
+      else input.addEventListener(event_name, listener, use_capture);
+      return instance;
     },
     off: function (event_name, listener, use_capture) {
-      if( listeners[event_name] ) return _remove(listeners[event_name], listener);
-      input.removeEventListener(event_name, listener, use_capture);
+      if( listeners[event_name] ) _remove(listeners[event_name], listener);
+      else input.removeEventListener(event_name, listener, use_capture);
+      return instance;
     },
     input: input,
     checkValidity: checkValidity,
     unbind: function () {
       input.removeEventListener( is_android ? 'keyup' : 'input' , onInput, options.useCapture );
       input.removeEventListener('blur' , onBlur, options.useCapture );
+      return instance;
     }
   };
+
+  return instance;
 };

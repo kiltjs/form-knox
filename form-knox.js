@@ -30,12 +30,26 @@ function formSubmitNoValidate (form, valid, e) {
   }
 }
 
-function formSubmit (form, onSubmit, options) {
+function _remove (list, item) {
+  for( var i = list.length - 1 ; i >= 0 ; i-- ) {
+    if( list[i] === item ) return list.splice(i, 1);
+  }
+}
+
+function runListeners (listeners, args, this_arg) {
+  for( var i = 0, n = listeners.length ; i < n ; i++ ) {
+    listeners[i].apply(this_arg, args);
+  }
+}
+
+function formBind (form, onSubmit, options) {
   options = options || {};
   if( !(onSubmit instanceof Function) ) {
     options = onSubmit || options;
     onSubmit = _noop;
   }
+
+  var listeners = { valid: [], invalid: [], reset: [] };
 
   if( options.novalidate ) form.setAttribute('novalidate', 'novalidate');
 
@@ -61,6 +75,8 @@ function formSubmit (form, onSubmit, options) {
       }
     }, 0);
 
+    runListeners( listeners[ valid ? 'valid' : 'invalid' ], [], form);
+
     if( !valid ) return;
 
     if( options.focus_invalid !== false && form.querySelector(':invalid') ) {
@@ -69,6 +85,30 @@ function formSubmit (form, onSubmit, options) {
 
     onSubmit(e);
   }, true);
+
+  form.addEventListener('reset', function () {
+    runListeners( listeners[ form.checkValidity() ? 'valid' : 'invalid' ], [], form);
+  });
+
+  var instance = {
+    form: form,
+    on: function (event_name, listener, use_capture) {
+      if( listeners[event_name] ) listeners[event_name].push(listener);
+      else form.addEventListener(event_name, listener, use_capture);
+      return instance;
+    },
+    off: function (event_name, listener, use_capture) {
+      if( listeners[event_name] ) _remove(listeners[event_name], listener);
+      else form.removeEventListener(event_name, listener, use_capture);
+      return instance;
+    },
+  };
+
+  Object.defineProperty(instance, 'data', {
+    get: function () { return formParams(form); }
+  });
+
+  return instance;
 }
 
 function formKnox (_env, createMask) {
@@ -99,7 +139,7 @@ function formKnox (_env, createMask) {
     return formats[format_name];
   };
 
-  env.submit = formSubmit;
+  env.form = formBind;
   env.params = formParams;
 
   return env;
