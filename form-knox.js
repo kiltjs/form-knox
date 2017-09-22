@@ -73,11 +73,9 @@ function formKnox (_env, createMask) {
   env.defineFormat = function (format_name, format_options) {
     var new_format = Object.create( typeof format_options === 'string' ? { mask: format_options } : format_options );
 
-    if( typeof new_format.mask === 'string' ) {
-      if( !formKnox.mask && !( createMask instanceof Function ) ) throw new Error('createMask should be a function');
-      new_format.mask = createMask(format_options.mask);
-    } else if( new_format.mask instanceof Function ) new_format.mask = format_options.mask;
-    else if( new_format.mask ) throw new Error('mask should be a string or a function');
+    if( createMask instanceof Function && typeof format_options.mask === 'string' ) new_format.mask = createMask(format_options.mask);
+    else if( new_format.mask instanceof Function ) new_format.mask = format_options.mask;
+    else if( new_format.mask ) throw new Error('mask should be a Function');
 
     formats[format_name] = new_format;
   };
@@ -100,5 +98,7 @@ function formKnox (_env, createMask) {
 
   return env;
 }
+
+formKnox(formKnox);
 
 module.exports = formKnox;

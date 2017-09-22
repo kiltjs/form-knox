@@ -2,7 +2,7 @@
   "name": "form-knox",
   "version": "1.0.15",
   "description": "form validity helper and input mask parser",
-  "main": "form-knox.js",
+  "main": "bundle.js",
   "scripts": {
     "test": "$(npm bin)/eslint form-knox.js input.js mask.js tests/** && $(npm bin)/mocha tests",
     "build": "browserify ./umd.js -o ./dist/form-knox.js"

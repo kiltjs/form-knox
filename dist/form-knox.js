@@ -1,5 +1,16 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 
+var formKnox = require('./form-knox'),
+    input = require('./input'),
+    mask = require('./mask');
+
+formKnox.input = input;
+formKnox.mask = mask;
+
+module.exports = formKnox(formKnox, mask);
+
+},{"./form-knox":2,"./input":3,"./mask":4}],2:[function(require,module,exports){
+
 function _noop () {}
 
 function formParams (form) {
@@ -74,11 +85,9 @@ function formKnox (_env, createMask) {
   env.defineFormat = function (format_name, format_options) {
     var new_format = Object.create( typeof format_options === 'string' ? { mask: format_options } : format_options );
 
-    if( typeof new_format.mask === 'string' ) {
-      if( !formKnox.mask && !( createMask instanceof Function ) ) throw new Error('createMask should be a function');
-      new_format.mask = createMask(format_options.mask);
-    } else if( new_format.mask instanceof Function ) new_format.mask = format_options.mask;
-    else if( new_format.mask ) throw new Error('mask should be a string or a function');
+    if( createMask instanceof Function && typeof format_options.mask === 'string' ) new_format.mask = createMask(format_options.mask);
+    else if( new_format.mask instanceof Function ) new_format.mask = format_options.mask;
+    else if( new_format.mask ) throw new Error('mask should be a Function');
 
     formats[format_name] = new_format;
   };
@@ -102,9 +111,11 @@ function formKnox (_env, createMask) {
   return env;
 }
 
+formKnox(formKnox);
+
 module.exports = formKnox;
 
-},{}],2:[function(require,module,exports){
+},{}],3:[function(require,module,exports){
 /* global navigator */
 
 var _noop = function () {};
@@ -179,7 +190,7 @@ module.exports = function input (input, options) {
   };
 };
 
-},{}],3:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 
 var matchValues = /{([a-z]+:)?[\w-]+}/g,
     matchParts = /{(([a-z]+):)?([\w-]+)}/;
@@ -244,7 +255,7 @@ module.exports = function inputMask (pattern) {
   return mask;
 };
 
-},{}],4:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 /* global define */
 
 (function (factory) {
@@ -252,16 +263,7 @@ module.exports = function inputMask (pattern) {
   else if ( 'define' in window && window.define.amd ) define([], factory);
   else window.formKnox = factory();
 })(function () {
-
-  var formKnox = require('./form-knox'),
-      input = require('./input'),
-      mask = require('./mask');
-
-  formKnox.input = input;
-  formKnox.mask = mask;
-
-  return formKnox(formKnox, mask);
-
+  return require('./bundle');
 });
 
-},{"./form-knox":1,"./input":2,"./mask":3}]},{},[4]);
+},{"./bundle":1}]},{},[5]);
