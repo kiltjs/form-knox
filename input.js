@@ -43,11 +43,12 @@ module.exports = function input (input, options) {
     return customError(input.value, mask_filled);
   }
 
+  var onChange = options.onChange || _noop;
+
   function checkValidity () {
     onChange.apply(input, [input.value, previous_value, mask_filled, getErrorKey(), validation_message ]);
   }
-
-  var onChange = options.onChange || _noop;
+  checkValidity();
 
   function onInput (_e) {
     applyMask();
