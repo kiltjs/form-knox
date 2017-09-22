@@ -139,7 +139,7 @@ function getValidityError (validity) {
 
 function runListeners (listeners, args, this_arg) {
   for( var i = 0, n = listeners.length ; i < n ; i++ ) {
-    listeners[i].call(this_arg, args);
+    listeners[i].apply(this_arg, args);
   }
 }
 
