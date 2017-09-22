@@ -1,10 +1,10 @@
 
-import mask from './mask';
-import input from './input';
+var mask = require('./mask');
+var input = require('./input');
 
 function _noop () {}
 
-export function formParams (form) {
+function formParams (form) {
   if( !(form instanceof Element) && form.length ) form = form[0];
 
   var data = {};
@@ -20,7 +20,7 @@ export function formParams (form) {
   return data;
 }
 
-export function formSubmitNoValidate (form, e) {
+function formSubmitNoValidate (form, e) {
   var valid = form.checkValidity();
 
   if( valid ) e.preventDefault();
@@ -35,7 +35,7 @@ export function formSubmitNoValidate (form, e) {
   }
 }
 
-export function formSubmit (form, onSubmit, options) {
+function formSubmit (form, onSubmit, options) {
   options = options || {};
   if( !(onSubmit instanceof Function) ) {
     options = onSubmit || options;
@@ -68,7 +68,7 @@ export function formSubmit (form, onSubmit, options) {
   }, true);
 }
 
-export default function formKnox (_env) {
+function formKnox (_env) {
   var formats = {},
       env = _env || {},
       error_messages = {};
@@ -106,3 +106,5 @@ export default function formKnox (_env) {
 }
 
 formKnox(formKnox);
+
+module.exports = formKnox;

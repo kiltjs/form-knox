@@ -14,7 +14,7 @@ function getValidityError (validity) {
   return 'invalid';
 }
 
-export default function input (input, options) {
+module.exports = function input (input, options) {
   options = options || {};
 
   var previous_value = input.value,
@@ -70,4 +70,4 @@ export default function input (input, options) {
       input.removeEventListener('blur' , onBlur, options.useCapture );
     }
   };
-}
+};
