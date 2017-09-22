@@ -29,9 +29,7 @@ function formParams (form) {
   return data;
 }
 
-function formSubmitNoValidate (form, e) {
-  var valid = form.checkValidity();
-
+function formSubmitNoValidate (form, valid, e) {
   if( valid ) e.preventDefault();
   else if( form.getAttribute('novalidate') !== null ) {
     form.removeAttribute('novalidate');
@@ -54,10 +52,12 @@ function formSubmit (form, onSubmit, options) {
   if( options.novalidate ) form.setAttribute('novalidate', 'novalidate');
 
   form.addEventListener('submit', function (e) {
-    if( options.novalidate ) formSubmitNoValidate(form, e);
+    var valid = form.checkValidity();
+
+    if( options.novalidate ) formSubmitNoValidate(form, valid, e);
     else form.checkValidity();
 
-    if( options.submitting ) setTimeout(function () {
+    if( valid && options.submitting ) setTimeout(function () {
       var submit_button = form.querySelector('button[type=submit],[type=submit]');
 
       if( form.submitting ) {
@@ -72,6 +72,12 @@ function formSubmit (form, onSubmit, options) {
         options.submitting(form.submitting);
       }
     }, 0);
+
+    if( !valid ) return;
+
+    if( options.focus_invalid !== false && form.querySelector(':invalid') ) {
+      form.querySelector(':invalid').focus();
+    }
 
     onSubmit(e);
   }, true);
