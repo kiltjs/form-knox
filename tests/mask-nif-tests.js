@@ -1,7 +1,7 @@
 /* global describe, it */
 
 var assert = require('assert'),
-    inputMask = require('../mask').default;
+    inputMask = require('../mask');
 
 describe('nif', function () {
 
