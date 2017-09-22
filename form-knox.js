@@ -2,6 +2,8 @@
 import mask from './mask';
 import input from './input';
 
+function _noop () {}
+
 export function formParams (form) {
   if( !(form instanceof Element) && form.length ) form = form[0];
 
@@ -16,6 +18,54 @@ export function formParams (form) {
     }
   });
   return data;
+}
+
+export function formSubmitNoValidate (form, e) {
+  var valid = form.checkValidity();
+
+  if( valid ) e.preventDefault();
+  else if( form.getAttribute('novalidate') !== null ) {
+    form.removeAttribute('novalidate');
+    e.preventDefault();
+    setTimeout(function () {
+      var submit_button = form.querySelector('button[type=submit],[type=submit]');
+      if( submit_button ) submit_button.click();
+      form.setAttribute('novalidate', 'novalidate');
+    });
+  }
+}
+
+export function formSubmit (form, onSubmit, options) {
+  options = options || {};
+  if( !(onSubmit instanceof Function) ) {
+    options = onSubmit || options;
+    onSubmit = _noop;
+  }
+
+  if( options.novalidate ) form.setAttribute('novalidate', 'novalidate');
+
+  form.addEventListener('submit', function (e) {
+    if( options.novalidate ) formSubmitNoValidate(form, e);
+    else form.checkValidity();
+
+    if( options.submitting ) setTimeout(function () {
+      var submit_button = form.querySelector('button[type=submit],[type=submit]');
+
+      if( form.submitting ) {
+        if( submit_button ) submit_button.setAttribute('disabled', 'disabled');
+
+        form.submitting.then(function (result) {
+          if( result !== 'no_redirect' ) submit_button.removeAttribute('disabled');
+        }, function () {
+          submit_button.removeAttribute('disabled');
+        });
+
+        options.submitting(form.submitting);
+      }
+    }, 0);
+
+    onSubmit(e);
+  }, true);
 }
 
 export default function formKnox (_env) {
@@ -47,8 +97,12 @@ export default function formKnox (_env) {
   };
 
   env.mask = mask;
-
   env.input = input;
+
+  env.submit = formSubmit;
+  env.params = formParams;
 
   return env;
 }
+
+formKnox(formKnox);
