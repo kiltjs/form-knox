@@ -1,7 +1,4 @@
 
-var mask = require('./mask');
-var input = require('./input');
-
 function _noop () {}
 
 function formParams (form) {
@@ -68,7 +65,7 @@ function formSubmit (form, onSubmit, options) {
   }, true);
 }
 
-function formKnox (_env) {
+function formKnox (createMask, _env) {
   var formats = {},
       env = _env || {},
       error_messages = {};
@@ -76,8 +73,10 @@ function formKnox (_env) {
   env.defineFormat = function (format_name, format_options) {
     var new_format = Object.create( typeof format_options === 'string' ? { mask: format_options } : format_options );
 
-    if( typeof new_format.mask === 'string' ) new_format.mask = mask(format_options.mask);
-    else if( new_format.mask instanceof Function ) new_format.mask = format_options.mask;
+    if( typeof new_format.mask === 'string' ) {
+      if( !formKnox.mask && !( createMask instanceof Function ) ) throw new Error('createMask should be a function');
+      new_format.mask = createMask(format_options.mask);
+    } else if( new_format.mask instanceof Function ) new_format.mask = format_options.mask;
     else if( new_format.mask ) throw new Error('mask should be a string or a function');
 
     formats[format_name] = new_format;
@@ -96,15 +95,10 @@ function formKnox (_env) {
     return formats[format_name];
   };
 
-  env.mask = mask;
-  env.input = input;
-
   env.submit = formSubmit;
   env.params = formParams;
 
   return env;
 }
-
-formKnox(formKnox);
 
 module.exports = formKnox;

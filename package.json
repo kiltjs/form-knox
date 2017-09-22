@@ -2,10 +2,10 @@
   "name": "form-knox",
   "version": "1.0.9",
   "description": "form validity helper and input mask parser",
-  "main": "dist/form-knox.js",
+  "main": "form-knox.js",
   "scripts": {
     "test": "$(npm bin)/eslint form-knox.js input.js mask.js tests/** && $(npm bin)/mocha tests",
-    "build": "browserify -s formKnox ./form-knox.js -o ./dist/form-knox.js",
+    "build": "browserify ./umd.js -o ./dist/form-knox.js",
     "prepublish": "npm test && npm run build && npm version patch"
   },
   "repository": "git@github.com:kiltjs/form-knox.git",
