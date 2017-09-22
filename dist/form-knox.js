@@ -118,8 +118,13 @@ module.exports = formKnox;
 },{}],3:[function(require,module,exports){
 /* global navigator */
 
-var _noop = function () {};
-var is_android = typeof navigator !== 'undefined' && navigator.userAgent.indexOf('Android') !== -1;
+var _noop = function () {},
+    is_android = typeof navigator !== 'undefined' && navigator.userAgent.indexOf('Android') !== -1,
+    _remove = function (list, item) {
+      for( var i = list.length - 1 ; i >= 0 ; i-- ) {
+        if( list[i] === item ) return list.splice(i, 1);
+      }
+    };
 
 // https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5/Constraint_validation
 // https://developer.mozilla.org/es/docs/Web/API/ValidityState
@@ -132,13 +137,20 @@ function getValidityError (validity) {
   return 'invalid';
 }
 
+function runListeners (listeners, args, this_arg) {
+  for( var i = 0, n = listeners.length ; i < n ; i++ ) {
+    listeners[i].call(this_arg, args);
+  }
+}
+
 module.exports = function input (input, options) {
   options = options || {};
 
   var previous_value = input.value,
       mask_filled = null,
       customError = options.customError || _noop,
-      validation_message = '';
+      validation_message = '',
+      listeners = { change: [], invalid: [] };
 
   var _inputMask = options.mask instanceof Function ? options.mask : null;
 
@@ -161,10 +173,10 @@ module.exports = function input (input, options) {
     return customError(input.value, mask_filled);
   }
 
-  var onChange = options.onChange || _noop;
+  if( options.onChange instanceof Function ) listeners.change.push(options.onChange);
 
   function checkValidity () {
-    onChange.apply(input, [input.value, previous_value, mask_filled, getErrorKey(), validation_message ]);
+    runListeners(listeners.change, [input.value, previous_value, mask_filled, getErrorKey(), validation_message ], input);
   }
   checkValidity();
 
@@ -182,6 +194,14 @@ module.exports = function input (input, options) {
   input.addEventListener('blur' , onBlur, options.useCapture );
 
   return {
+    on: function (event_name, listener, use_capture) {
+      if( listeners[event_name] ) return listeners[event_name].push(listener);
+      input.addEventListener(event_name, listener, use_capture);
+    },
+    off: function (event_name, listener, use_capture) {
+      if( listeners[event_name] ) return _remove(listeners[event_name], listener);
+      input.removeEventListener(event_name, listener, use_capture);
+    },
     input: input,
     checkValidity: checkValidity,
     unbind: function () {
