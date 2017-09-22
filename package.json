@@ -1,17 +1,21 @@
 {
   "name": "form-knox",
-  "version": "1.0.0",
-  "description": "input mask parser",
+  "version": "1.0.1",
+  "description": "form validity helper and input mask parser",
   "main": "dist/form-knox.js",
   "scripts": {
-    "test": "$(npm bin)/eslint input-mask.js tests/** && $(npm bin)/mocha --require babel-polyfill --compilers js:babel-register tests",
+    "test": "$(npm bin)/eslint form-knox.js input.js mask.js tests/** && $(npm bin)/mocha --require babel-polyfill --compilers js:babel-register tests",
     "build": "rollup form-knox.js --o dist/form-knox.js --f umd --name \"formKnox\"",
     "prepublish": "npm run build"
   },
-  "repository": "git@github.com:kiltjs/input-mask.git",
+  "repository": "git@github.com:kiltjs/form-knox.git",
   "author": "Jesús Germade <jesus@germade.es>",
   "license": "ISC",
   "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-polyfill": "^6.26.0",
+    "babel-preset-env": "^1.6.0",
+    "babel-register": "^6.26.0",
     "eslint": "^3.14.1",
     "mocha": "^3.2.0",
     "rollup": "^0.50.0"
