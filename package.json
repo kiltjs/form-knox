@@ -5,8 +5,7 @@
   "main": "form-knox.js",
   "scripts": {
     "test": "$(npm bin)/eslint form-knox.js input.js mask.js tests/** && $(npm bin)/mocha tests",
-    "build": "browserify ./umd.js -o ./dist/form-knox.js",
-    "prepublish": "npm test && npm run build && npm version patch"
+    "build": "browserify ./umd.js -o ./dist/form-knox.js"
   },
   "repository": "git@github.com:kiltjs/form-knox.git",
   "author": "Jesús Germade <jesus@germade.es>",
