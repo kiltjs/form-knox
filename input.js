@@ -27,14 +27,19 @@ function runListeners (listeners, args, this_arg) {
   }
 }
 
+function defineProperty (o, key, getter, setter) {
+  Object.defineProperty(o, key, { get: getter, set: setter });
+}
+
 module.exports = function input (input, options) {
   options = options || {};
 
   var previous_value = input.value,
       mask_filled = null,
+      custom_error = null,
       customError = options.customError || _noop,
       validation_message = '',
-      listeners = { change: [], invalid: [] };
+      listeners = { change: [] };
 
   var _inputMask = options.mask instanceof Function ? options.mask : null;
 
@@ -50,6 +55,7 @@ module.exports = function input (input, options) {
   function getErrorKey () {
     input.setCustomValidity('');
     validation_message = input.validationMessage;
+    if( custom_error ) return custom_error;
     if( !input.value && input.getAttribute('required') !== null ) return 'required';
     if( _inputMask && !mask_filled ) return 'uncomplete';
     if( input.validity && !input.validity.valid ) return getValidityError(input.validity);
@@ -66,6 +72,7 @@ module.exports = function input (input, options) {
 
   function onInput () {
     if( input.value === previous_value ) return;
+    custom_error = null;
     applyMask();
     previous_value = input.value;
     checkValidity();
@@ -80,55 +87,60 @@ module.exports = function input (input, options) {
   input.addEventListener('blur' , onBlur, options.useCapture );
 
   var component = {
+    input: input,
+    setCustomValidity: function (message) {
+      input.setCustomValidity(message);
+      custom_error = 'custom';
+      checkValidity();
+      return this;
+    },
+    setError: function (error_key) {
+      custom_error = error_key;
+      checkValidity();
+      return this;
+    },
     attr: function (key, value) {
       if( value === undefined ) return input.getAttribute(key);
       else if( value === null ) input.removeAttribute(key);
       else input.setAttribute(key, value);
       onInput();
-      return component;
+      return this;
     },
     on: function (event_name, listener, use_capture) {
       if( listeners[event_name] ) listeners[event_name].push(listener);
       else input.addEventListener(event_name, listener, use_capture);
-      return component;
+      return this;
     },
     off: function (event_name, listener, use_capture) {
       if( listeners[event_name] ) _remove(listeners[event_name], listener);
       else input.removeEventListener(event_name, listener, use_capture);
-      return component;
+      return this;
     },
-    input: input,
     checkValidity: checkValidity,
     unbind: function () {
       input.removeEventListener( is_android ? 'keyup' : 'input' , onInput, options.useCapture );
       input.removeEventListener('blur' , onBlur, options.useCapture );
       input.removeEventListener('change' , onInput, options.useCapture );
-      return component;
+      return this;
     }
   };
 
-  Object.defineProperty(component, 'value', {
-    set: function (value) {
-      previous_value = '';
-      input.value = value || '';
-      onInput();
-    },
-    get: function () {
-      return input.value;
-    }
+  defineProperty(component, 'value', function () {
+    return input.value;
+  }, function (value) {
+    previous_value = '';
+    input.value = value || '';
+    onInput();
   });
 
-  Object.defineProperty(component, 'model', {
-    set: options.fromModel ? function (model) {
-      component.value = options.fromModel(model);
-    } : function (model) {
-      component.value = model;
-    },
-    get: options.toModel ? function () {
-      return options.toModel(input.value);
-    } : function () {
-      return input.value;
-    }
+  defineProperty(component, 'model', options.toModel ? function () {
+    return options.toModel(input.value);
+  } : function () {
+    return input.value;
+  }, options.fromModel ? function (model) {
+    component.value = options.fromModel(model);
+  } : function (model) {
+    component.value = model;
   });
 
   if( options.value ) {
