@@ -1,6 +1,6 @@
 {
   "name": "form-knox",
-  "version": "1.0.26",
+  "version": "1.0.27",
   "description": "form validity helper and input mask parser",
   "main": "bundle.js",
   "scripts": {
