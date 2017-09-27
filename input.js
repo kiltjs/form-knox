@@ -36,7 +36,7 @@ module.exports = function input (input, options) {
       validation_message = '',
       listeners = { change: [], invalid: [] };
 
-  var _inputMask = options.mask componentof Function ? options.mask : null;
+  var _inputMask = options.mask instanceof Function ? options.mask : null;
 
   var applyMask = _inputMask ? function () {
     var result = _inputMask(input.value, previous_value);
@@ -57,7 +57,7 @@ module.exports = function input (input, options) {
     return customError(input.value, mask_filled);
   }
 
-  if( options.onChange componentof Function ) listeners.change.push(options.onChange);
+  if( options.onChange instanceof Function ) listeners.change.push(options.onChange);
 
   function checkValidity () {
     runListeners(listeners.change, [input.value, previous_value, mask_filled, getErrorKey(), validation_message ], input);
