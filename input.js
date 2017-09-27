@@ -102,6 +102,7 @@ module.exports = function input (input, options) {
 
   Object.defineProperty(component, 'value', {
     set: function (value) {
+      previous_value = '';
       input.value = value || '';
       onInput();
     },
