@@ -31,6 +31,10 @@ function defineProperty (o, key, getter, setter) {
   Object.defineProperty(o, key, { get: getter, set: setter });
 }
 
+function setInputAttributes (component, attrs) {
+  for( var key in attrs ) component.attr(key, attrs[key]);
+}
+
 module.exports = function input (input, options) {
   options = options || {};
 
@@ -151,6 +155,8 @@ module.exports = function input (input, options) {
     component.setAttribute('value', options.value);
     previous_value = options.value;
   }
+
+  if( options.attrs ) setInputAttributes(component, options.attrs);
   onInput();
 
   return component;
