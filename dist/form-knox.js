@@ -228,7 +228,8 @@ module.exports = function input (input, options) {
   }
   checkValidity();
 
-  function onInput (_e) {
+  function onInput () {
+    if( input.value === previous_value ) return;
     applyMask();
     previous_value = input.value;
     checkValidity();
@@ -239,29 +240,54 @@ module.exports = function input (input, options) {
   }
 
   input.addEventListener( is_android ? 'keyup' : 'input' , onInput, options.useCapture );
+  input.addEventListener('change' , onInput, options.useCapture );
   input.addEventListener('blur' , onBlur, options.useCapture );
 
-  var instance = {
+  var component = {
     on: function (event_name, listener, use_capture) {
       if( listeners[event_name] ) listeners[event_name].push(listener);
       else input.addEventListener(event_name, listener, use_capture);
-      return instance;
+      return component;
     },
     off: function (event_name, listener, use_capture) {
       if( listeners[event_name] ) _remove(listeners[event_name], listener);
       else input.removeEventListener(event_name, listener, use_capture);
-      return instance;
+      return component;
     },
     input: input,
     checkValidity: checkValidity,
     unbind: function () {
       input.removeEventListener( is_android ? 'keyup' : 'input' , onInput, options.useCapture );
       input.removeEventListener('blur' , onBlur, options.useCapture );
-      return instance;
+      input.removeEventListener('change' , onInput, options.useCapture );
+      return component;
     }
   };
 
-  return instance;
+  Object.defineProperty(component, 'value', {
+    set: function (value) {
+      input.value = value || '';
+      onInput();
+    },
+    get: function () {
+      return input.value;
+    }
+  });
+
+  Object.defineProperty(component, 'model', {
+    set: options.fromModel ? function (model) {
+      component.value = options.fromModel(model);
+    } : function (model) {
+      component.value = model;
+    },
+    get: options.toModel ? function () {
+      return options.toModel(input.value);
+    } : function () {
+      return input.value;
+    }
+  });
+
+  return component;
 };
 
 },{}],4:[function(require,module,exports){
