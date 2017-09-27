@@ -244,6 +244,13 @@ module.exports = function input (input, options) {
   input.addEventListener('blur' , onBlur, options.useCapture );
 
   var component = {
+    attr: function (key, value) {
+      if( value === undefined ) return input.getAttribute(key);
+      else if( value === null ) input.removeAttribute(key);
+      else input.setAttribute(key, value);
+      onInput();
+      return component;
+    },
     on: function (event_name, listener, use_capture) {
       if( listeners[event_name] ) listeners[event_name].push(listener);
       else input.addEventListener(event_name, listener, use_capture);
@@ -287,6 +294,12 @@ module.exports = function input (input, options) {
       return input.value;
     }
   });
+
+  if( options.value ) {
+    component.setAttribute('value', options.value);
+    previous_value = options.value;
+  }
+  onInput();
 
   return component;
 };
