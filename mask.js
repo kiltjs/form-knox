@@ -9,7 +9,7 @@ var transformers = {
 
 module.exports = function inputMask (pattern) {
   var matchDigit = /\d/,
-      markSeparators = pattern.split(matchValues).filter( (_v, i) => !(i%2) ),
+      markSeparators = pattern.split(matchValues).filter( function (_v, i) { return !(i%2); }),
       patterns = pattern.match(matchValues).map(function (brackets) {
         if( brackets === '{9}' ) return matchDigit;
         var matches = brackets.match(matchParts);
