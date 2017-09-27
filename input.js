@@ -103,7 +103,7 @@ module.exports = function input (input, options) {
       if( value === undefined ) return input.getAttribute(key);
       else if( value === null ) input.removeAttribute(key);
       else input.setAttribute(key, value);
-      onInput();
+      checkValidity();
       return this;
     },
     on: function (event_name, listener, use_capture) {
