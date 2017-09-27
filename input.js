@@ -82,6 +82,8 @@ module.exports = function input (input, options) {
     if(input.value !== previous_value) onInput(e);
   }
 
+  if( !input.getAttribute('type') ) input.setAttribute('type', options.type || ( options.number ? 'tel' : 'text' ) );
+
   input.addEventListener( is_android ? 'keyup' : 'input' , onInput, options.useCapture );
   input.addEventListener('change' , onInput, options.useCapture );
   input.addEventListener('blur' , onBlur, options.useCapture );
@@ -135,9 +137,11 @@ module.exports = function input (input, options) {
 
   defineProperty(component, 'model', options.toModel ? function () {
     return options.toModel(input.value);
+  } : ( options.number ? function () {
+    return Number(input.value);
   } : function () {
     return input.value;
-  }, options.fromModel ? function (model) {
+  }), options.fromModel ? function (model) {
     component.value = options.fromModel(model);
   } : function (model) {
     component.value = model;
