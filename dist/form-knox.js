@@ -210,9 +210,9 @@ module.exports = function input (input, options) {
       listeners = { change: [] };
 
   var _inputMask = options.mask instanceof Function ? options.mask : null,
-      plainValue = function (value) {
+      plainValue = options.plain ? function (value) {
         return _inputMask(value).plain;
-      };
+      } : function (value) { return value; };
 
   var applyMask = _inputMask ? function () {
     var result = _inputMask(input.value, previous_value);
@@ -237,7 +237,7 @@ module.exports = function input (input, options) {
   if( options.onChange instanceof Function ) listeners.change.push(options.onChange);
 
   function checkValidity () {
-    runListeners(listeners.change, [plainValue(input.value), mask_filled, getErrorKey(), input.value, previous_value, validation_message ], input);
+    runListeners(listeners.change, [plainValue(input.value), mask_filled, getErrorKey(), previous_value, validation_message ], input);
   }
   checkValidity();
 
@@ -299,7 +299,7 @@ module.exports = function input (input, options) {
   };
 
   defineProperty(component, 'value', function () {
-    return input.value;
+    return plainValue(input.value);
   }, function (value) {
     previous_value = '';
     input.value = value || '';
@@ -307,11 +307,11 @@ module.exports = function input (input, options) {
   });
 
   defineProperty(component, 'model', options.toModel ? function () {
-    return options.toModel(input.value);
+    return options.toModel( plainValue(input.value) );
   } : ( options.number ? function () {
-    return Number(input.value);
+    return Number( plainValue(input.value) );
   } : function () {
-    return input.value;
+    return plainValue(input.value);
   }), options.fromModel ? function (model) {
     component.value = options.fromModel(model);
   } : function (model) {
