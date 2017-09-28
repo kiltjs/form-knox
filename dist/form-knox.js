@@ -209,7 +209,10 @@ module.exports = function input (input, options) {
       validation_message = '',
       listeners = { change: [] };
 
-  var _inputMask = options.mask instanceof Function ? options.mask : null;
+  var _inputMask = options.mask instanceof Function ? options.mask : null,
+      plainValue = function (value) {
+        return _inputMask(value).plain;
+      };
 
   var applyMask = _inputMask ? function () {
     var result = _inputMask(input.value, previous_value);
@@ -234,7 +237,7 @@ module.exports = function input (input, options) {
   if( options.onChange instanceof Function ) listeners.change.push(options.onChange);
 
   function checkValidity () {
-    runListeners(listeners.change, [input.value, previous_value, mask_filled, getErrorKey(), validation_message ], input);
+    runListeners(listeners.change, [plainValue(input.value), mask_filled, getErrorKey(), input.value, previous_value, validation_message ], input);
   }
   checkValidity();
 
@@ -337,12 +340,6 @@ var transformers = {
 };
 
 module.exports = function inputMask (pattern) {
-  var use_placeholder = true;
-  if( /^::/.test(pattern) ) {
-    use_placeholder = false;
-    pattern = pattern.replace(/^:: */,'');
-  }
-
   var matchDigit = /\d/,
       markSeparators = pattern.split(matchValues).filter( function (_v, i) { return !(i%2); }),
       patterns = pattern.match(matchValues).map(function (brackets) {
@@ -362,35 +359,39 @@ module.exports = function inputMask (pattern) {
   function mask (value, previous_value) {
     var separators = markSeparators.slice(),
         result = '',
+        plain = '',
         letters = value.split(''),
         i, n, letter,
         p = 0;
 
     for( i = 0, n = letters.length; i < n ; i++ ) {
-      if( !patterns[p] ) return { value: result, filled: true };
+      if( !patterns[p] ) return { value: result, plain: plain, filled: true };
       letter = patterns[p].transform ? patterns[p].transform(letters[i]) : letters[i];
 
       if( patterns[p].test(letter) ) {
-        result += (use_placeholder ? separators[p] : '') + letter;
+        plain += letter;
+        result += separators[p] + letter;
         p++;
       } else if( letter === separators[p][0] ) {
-        if( use_placeholder ) result += separators[p][0];
+        result += separators[p][0];
         separators[p] = separators[p].substr(1);
       } else {
-        return { value: result, filled: false };
+        return { value: result, plain: plain, filled: false };
       }
     }
 
     if( previous_value && value.length < previous_value.length ) {
       return {
         value: previous_value.substr(-1) === separators[p][0] ? result.substr(0, result.length - 1) : result,
-        filled: p === patterns.length
+        plain: previous_value.substr(-1) === separators[p][0] ? plain.substr(0, plain.length - 1) : plain,
+        filled: p === patterns.length,
       };
     }
 
     return {
-      value: result + (use_placeholder ? separators[p] : ''),
-      filled: p === patterns.length
+      value: result + separators[p],
+      filled: p === patterns.length,
+      plain: plain,
     };
   }
 
