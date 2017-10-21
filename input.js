@@ -42,6 +42,7 @@ module.exports = function input (input, options) {
       mask_filled = null,
       custom_error = null,
       customError = options.customError || _noop,
+      error_key = null,
       validation_message = '',
       listeners = { change: [] };
 
@@ -73,7 +74,8 @@ module.exports = function input (input, options) {
   if( options.onChange instanceof Function ) listeners.change.push(options.onChange);
 
   function checkValidity () {
-    runListeners(listeners.change, [plainValue(input.value), mask_filled, getErrorKey(), previous_value, validation_message ], input);
+    error_key = getErrorKey();
+    runListeners(listeners.change, [plainValue(input.value), mask_filled, error_key, previous_value, validation_message ], input);
   }
   setTimeout(checkValidity, 0);
 
@@ -147,6 +149,10 @@ module.exports = function input (input, options) {
 
   defineProperty(component, 'filled', function () {
     return mask_filled;
+  });
+
+  defineProperty(component, 'valid', function () {
+    return !error_key;
   });
 
   defineProperty(component, 'model', options.toModel ? function () {
