@@ -22,3 +22,5 @@ publish.release:
 	$(shell curl -fsSL https://gist.githubusercontent.com/jgermade/d394e47341cf761286595ff4c865e2cd/raw/ -o - | sh -)
 
 release: build publish.release
+
+.DEFAULT_GOAL := build

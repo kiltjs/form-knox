@@ -263,6 +263,9 @@ module.exports = function input (input, options) {
 
   var component = {
     input: input,
+    focus: function () {
+      return input.focus();
+    },
     setCustomValidity: function (message) {
       input.setCustomValidity(message);
       custom_error = 'custom';
