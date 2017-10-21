@@ -308,6 +308,10 @@ module.exports = function input (input, options) {
     onInput();
   });
 
+  defineProperty(component, 'filled', function () {
+    return mask_filled;
+  });
+
   defineProperty(component, 'model', options.toModel ? function () {
     return options.toModel( plainValue(input.value) );
   } : ( options.number ? function () {
