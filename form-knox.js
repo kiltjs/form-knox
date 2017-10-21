@@ -77,13 +77,15 @@ function formBind (form, onSubmit, options) {
 
     runListeners( listeners[ valid ? 'valid' : 'invalid' ], [], form);
 
-    if( !valid ) return;
+    if( options.onInvalid && !valid ) {
+      return options.onInvalid(e);
+    }
 
     if( options.focus_invalid !== false && form.querySelector(':invalid') ) {
       form.querySelector(':invalid').focus();
     }
 
-    onSubmit(e);
+    onSubmit(e, valid);
   }, true);
 
   form.addEventListener('reset', function () {
