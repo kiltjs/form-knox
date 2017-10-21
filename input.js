@@ -75,7 +75,7 @@ module.exports = function input (input, options) {
   function checkValidity () {
     runListeners(listeners.change, [plainValue(input.value), mask_filled, getErrorKey(), previous_value, validation_message ], input);
   }
-  checkValidity();
+  setTimeout(checkValidity, 0);
 
   function onInput () {
     if( input.value === previous_value ) return;
