@@ -233,10 +233,9 @@ module.exports = function input (input, options) {
 
     if( input.value ) {
 
-      if( _inputMask && !mask_filled ) return 'uncomplete';
       if( input.validity && !input.validity.valid ) return getValidityError(input.validity);
-      
-      return customError( plainValue(input.value), input.value );
+
+      return customError( plainValue(input.value), input.value , mask_filled ) || ( _inputMask && !mask_filled && 'uncomplete');
 
     } else if( input.getAttribute('required') !== null ) return 'required';
 
