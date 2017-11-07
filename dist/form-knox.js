@@ -230,9 +230,13 @@ module.exports = function input (input, options) {
     input.setCustomValidity('');
     validation_message = input.validationMessage;
     if( custom_error ) return custom_error;
-    if( !input.value && input.getAttribute('required') !== null ) return 'required';
-    if( _inputMask && !mask_filled ) return 'uncomplete';
-    if( input.validity && !input.validity.valid ) return getValidityError(input.validity);
+
+    if( input.value ) {
+
+      if( _inputMask && !mask_filled ) return 'uncomplete';
+      if( input.validity && !input.validity.valid ) return getValidityError(input.validity);
+
+    } else if( input.getAttribute('required') !== null ) return 'required';
 
     return customError( plainValue(input.value), input.value );
   }
