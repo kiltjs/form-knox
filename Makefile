@@ -17,10 +17,6 @@ build: install lint
 	$(shell npm bin)/rollup src/input.js --output.format cjs --output.file dist/input.js
 	$(shell npm bin)/rollup src/mask.js --output.format cjs --output.file dist/mask.js
 
-	cp README.md dist/README.md
-	cp package.json dist/package.json
-	cp -r src dist/es6
-
 mocha:
 	$(shell npm bin)/mocha tests
 
@@ -49,7 +45,11 @@ git.tag:
 	# git push origin $(git_branch)
 
 npm.publish: test npm.pushVersion git.tag
+	cp README.md dist/README.md
+	cp package.json dist/package.json
+	cp -r src dist/es6
 	cd dist && npm publish
+
 	git reset --soft HEAD~1
 	git reset HEAD
 	# git reset --hard origin/$(git_branch)
