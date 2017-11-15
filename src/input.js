@@ -69,7 +69,7 @@ export default function input (input, options) {
 
       if( input.validity && !input.validity.valid ) return getValidityError(input.validity);
 
-      return customError( input.value, mask_filled, plainValue(input.value) ) || ( _inputMask && !mask_filled && 'uncomplete');
+      return customError( plainValue(input.value), mask_filled, input.value ) || ( _inputMask && !mask_filled && 'uncomplete');
 
     } else if( input.getAttribute('required') !== null ) return 'required';
 

@@ -11,7 +11,7 @@ lint:
 
 build: install lint
 	# $(shell npm bin)/rollup src/bundle.js --output.format cjs --output.file dist/bundle.js
-	$(shell npm bin)/babel src/bundle.js --out-file dist/bundle.js
+	cp src/bundle.cjs.js dist/bundle.js
 	$(shell npm bin)/rollup src/bundle.js --output.format umd --output.file dist/bundle.umd.js -n formKnox
 
 	$(shell npm bin)/rollup src/form-knox.js --output.format cjs --output.file dist/form-knox.js
