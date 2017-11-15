@@ -50,7 +50,6 @@ git.tag:
 
 npm.publish: test npm.pushVersion git.tag
 	cd dist && npm publish
-	git subtree push --prefix dist origin dist
 	git reset --soft HEAD~1
 	git reset HEAD
 	# git reset --hard origin/$(git_branch)
