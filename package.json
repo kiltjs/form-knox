@@ -4,15 +4,14 @@
   "description": "form validity helper and input mask parser",
   "main": "bundle.js",
   "scripts": {
-    "test": "$(npm bin)/eslint form-knox.js input.js mask.js tests/** && $(npm bin)/mocha tests",
-    "build": "browserify ./umd.js -o ./dist/form-knox.js"
+    "test": "make test"
   },
   "repository": "git@github.com:kiltjs/form-knox.git",
   "author": "Jesús Germade <jesus@germade.es>",
   "license": "ISC",
   "devDependencies": {
-    "browserify": "^14.4.0",
-    "eslint": "^3.14.1",
-    "mocha": "^3.2.0"
+    "eslint": "4.11.0",
+    "mocha": "4.0.1",
+    "rollup": "^0.51.5"
   }
 }

@@ -6,17 +6,25 @@ git_branch := $(shell git rev-parse --abbrev-ref HEAD)
 install:
 	npm install
 
-eslint:
+lint:
 	$(shell npm bin)/eslint form-knox.js input.js mask.js tests/**
+
+build: install lint
+	$(shell npm bin)/rollup src/bundle.js --format cjs --output dist/bundle.js
+	$(shell npm bin)/rollup src/bundle.js --format umd --output dist/bundle.umd.js -n formKnox
+
+	$(shell npm bin)/rollup src/form-knox.js --format cjs --output dist/form-knox.js
+	$(shell npm bin)/rollup src/input.js --format cjs --output dist/input.js
+	$(shell npm bin)/rollup src/mask.js --format cjs --output dist/mask.js
+
+	cp README.md dist/README.md
+	cp package.json dist/package.json
+	cp -r src dist/es6
 
 mocha:
 	$(shell npm bin)/mocha tests
 
-test: install eslint mocha
-
-build: test
-	@$(shell npm bin)/browserify ./bundle.js -o ./dist/form-knox.js
-	@$(shell npm bin)/browserify ./umd.js -o ./dist/form-knox.umd.js
+test: build mocha
 
 # publish.release:
 # 	@echo "\nrunning https://gist.githubusercontent.com/jgermade/d394e47341cf761286595ff4c865e2cd/raw/\n"
@@ -40,8 +48,8 @@ git.tag:
 	git push --tags
 	# git push origin $(git_branch)
 
-npm.publish: build test npm.pushVersion git.tag
-	npm publish
+npm.publish: test npm.pushVersion git.tag
+	cd dist && npm publish
 	git reset --soft HEAD~1
 	git reset HEAD
 	# git reset --hard origin/$(git_branch)
@@ -51,7 +59,7 @@ github.release: export PKG_NAME=$(shell node -e "console.log(require('./package.
 github.release: export PKG_VERSION=$(shell node -e "process.stdout.write('v'+require('./package.json').version);")
 github.release: export RELEASE_URL=$(shell curl -s -X POST -H "Content-Type: application/json" -H "Authorization: Bearer ${GITHUB_TOKEN}" \
 	-d '{"tag_name": "${PKG_VERSION}", "target_commitish": "$(git_branch)", "name": "${PKG_VERSION}", "body": "", "draft": false, "prerelease": false}' \
-	-w '%{url_effective}' "https://api.github.com/repos/kiltjs/azazel/releases" )
+	-w '%{url_effective}' "https://api.github.com/repos/kiltjs/form-knox/releases" )
 github.release:
 	@echo ${RELEASE_URL}
 	@true

@@ -1,7 +1,7 @@
 /* global describe, it */
 
 var assert = require('assert'),
-    inputMask = require('../mask');
+    inputMask = require('../dist/mask');
 
 describe('tel', function () {
 
