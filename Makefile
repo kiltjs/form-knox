@@ -10,6 +10,7 @@ lint:
 	$(shell npm bin)/eslint form-knox.js input.js mask.js tests/**
 
 build: install lint
+	mkdir -p dist
 	# $(shell npm bin)/rollup src/bundle.js --output.format cjs --output.file dist/bundle.js
 	cp src/bundle.cjs.js dist/bundle.js
 	$(shell npm bin)/rollup src/bundle.js --output.format umd --output.file dist/bundle.umd.js -n formKnox
