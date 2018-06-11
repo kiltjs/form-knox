@@ -117,6 +117,15 @@ export default function input (input, options) {
       checkValidity();
       return this;
     },
+    setRequired: function (required) {
+      if( required ) {
+        input.setAttribute('required', '');
+      } else if( input.hasAttribute('required') ) {
+        input.removeAttribute('required');
+      }
+      checkValidity();
+      return this;
+    },
     attr: function (key, value) {
       if( value === undefined ) return input.getAttribute(key);
       else if( value === null ) input.removeAttribute(key);
@@ -169,6 +178,10 @@ export default function input (input, options) {
     component.value = options.fromModel(model);
   } : function (model) {
     component.value = model;
+  });
+
+  defineProperty(component, 'is_required', function () {
+    return input.hasAttribute('required');
   });
 
   if( options.value ) {
