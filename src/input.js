@@ -35,7 +35,7 @@ export default function initInput (input, options) {
       validation_message = '',
       listeners = { change: [] };
 
-  if( !input.getAttribute('type') ) input.setAttribute('type', options.type || ( options.number ? 'tel' : 'text' ) );
+  if( !input.hasAttribute('type') ) input.setAttribute('type', options.type || ( options.number ? 'tel' : 'text' ) );
 
   var _inputMask = options.mask instanceof Function ? options.mask : null,
       plainValue = options.plain ? function (value) {
@@ -95,7 +95,7 @@ export default function initInput (input, options) {
     setCustomValidity: function (message) {
       input.setCustomValidity(message);
       custom_error = 'custom';
-      checkValidity();
+      // checkValidity();
       return this;
     },
     setError: function (error_key) {
