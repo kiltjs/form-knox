@@ -58,9 +58,14 @@ export default function initInput (input, options) {
     if( custom_error ) return custom_error;
 
     if( input.value ) {
-      if( input.validity && !input.validity.valid ) return getValidityError(input.validity);
 
-      return ( options.customError || _noop )( plainValue(input.value), mask_filled, input.value ) || ( _inputMask && !mask_filled && 'uncomplete');
+      return (
+        options.customError && options.customError( plainValue(input.value), mask_filled, input.value )
+      ) || (
+        input.validity && !input.validity.valid && getValidityError(input.validity)
+      ) || (
+        _inputMask && !mask_filled && 'uncomplete'
+      );
 
     } else if( input.hasAttribute('required') ) return 'required';
   }
