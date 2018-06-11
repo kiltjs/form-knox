@@ -1,0 +1,17 @@
+{
+  "name": "form-knox",
+  "version": "1.0.54",
+  "description": "form validity helper and input mask parser",
+  "main": "bundle.js",
+  "scripts": {
+    "test": "make test"
+  },
+  "repository": "git@github.com:kiltjs/form-knox.git",
+  "author": "Jesús Germade <jesus@germade.es>",
+  "license": "MIT",
+  "devDependencies": {
+    "eslint": "4.19.1",
+    "mocha": "5.2.0",
+    "rollup": "0.60.2"
+  }
+}
