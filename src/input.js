@@ -52,7 +52,7 @@ export default function initInput (input, options) {
   } : _noop;
 
   function getErrorKey () {
-    if( custom_error !== 'custom' ) input.setCustomValidity('');
+    input.setCustomValidity('');
     validation_message = input.validationMessage;
 
     if( custom_error ) return custom_error;
@@ -94,7 +94,7 @@ export default function initInput (input, options) {
     },
     setCustomValidity: function (message) {
       input.setCustomValidity(message);
-      custom_error = 'custom';
+      // custom_error = 'custom';
       // checkValidity();
       return this;
     },
