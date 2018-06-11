@@ -144,7 +144,10 @@ function formKnox (_env, createMask) {
   return env;
 }
 
-formKnox.initInput = initInput;
+formKnox.initInput = function () {
+  initInput(input, options, this);
+  return this;
+};
 
 formKnox(formKnox);
 
