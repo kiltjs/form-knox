@@ -104,6 +104,7 @@ export default function initInput (input, options) {
       return this;
     },
     setRequired: function (required) {
+      custom_error = null;
       if( required ) {
         input.setAttribute('required', '');
       } else if( input.hasAttribute('required') ) {
