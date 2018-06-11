@@ -2,7 +2,7 @@
 var matchValues = /{([a-z]+:)?[\w-]+}/g,
     matchParts = /{(([a-z]+):)?([\w-]+)}/;
 
-var transformers = {
+var filterers = {
   up: function (value) { return value.toUpperCase(); },
   lo: function (value) { return value.toLowerCase(); }
 };
@@ -16,7 +16,7 @@ export default function inputMask (pattern) {
         var pat = new RegExp('[' + matches[3] + ']');
         if( matches[2] ) {
           return {
-            transform: transformers[matches[2]],
+            filter: filterers[matches[2]],
             test: pat.test.bind(pat)
           };
         }
@@ -34,7 +34,7 @@ export default function inputMask (pattern) {
 
     for( i = 0, n = letters.length; i < n ; i++ ) {
       if( !patterns[p] ) return { value: result, plain: plain, filled: true };
-      letter = patterns[p].transform ? patterns[p].transform(letters[i]) : letters[i];
+      letter = patterns[p].filter ? patterns[p].filter(letters[i]) : letters[i];
 
       if( patterns[p].test(letter) ) {
         plain += letter;

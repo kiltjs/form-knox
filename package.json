@@ -8,10 +8,10 @@
   },
   "repository": "git@github.com:kiltjs/form-knox.git",
   "author": "Jesús Germade <jesus@germade.es>",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
-    "eslint": "4.11.0",
-    "mocha": "4.0.1",
-    "rollup": "^0.51.5"
+    "eslint": "4.19.1",
+    "mocha": "5.2.0",
+    "rollup": "0.60.2"
   }
 }

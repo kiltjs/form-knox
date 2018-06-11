@@ -1,12 +1,6 @@
 /* global navigator */
 
-var _noop = function () {},
-    is_android = typeof navigator !== 'undefined' && navigator.userAgent.indexOf('Android') !== -1,
-    _remove = function (list, item) {
-      for( var i = list.length - 1 ; i >= 0 ; i-- ) {
-        if( list[i] === item ) return list.splice(i, 1);
-      }
-    };
+import { _noop, is_android, _remove, _defineProperty } from './utils';
 
 // https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5/Constraint_validation
 // https://developer.mozilla.org/en-US/docs/Learn/HTML/Forms/HTML5_updates#Constraint_Validation_API
@@ -27,24 +21,21 @@ function runListeners (listeners, args, this_arg) {
   }
 }
 
-function defineProperty (o, key, getter, setter) {
-  Object.defineProperty(o, key, { get: getter, set: setter });
-}
-
 function setInputAttributes (component, attrs) {
   for( var key in attrs ) component.attr(key, attrs[key]);
 }
 
-export default function input (input, options) {
+export default function initInput (input, options) {
   options = options || {};
 
   var previous_value = input.value,
       mask_filled = null,
       custom_error = null,
-      customError = options.customError || _noop,
       error_key = null,
       validation_message = '',
       listeners = { change: [] };
+
+  if( !input.getAttribute('type') ) input.setAttribute('type', options.type || ( options.number ? 'tel' : 'text' ) );
 
   var _inputMask = options.mask instanceof Function ? options.mask : null,
       plainValue = options.plain ? function (value) {
@@ -61,25 +52,26 @@ export default function input (input, options) {
   } : _noop;
 
   function getErrorKey () {
-    input.setCustomValidity('');
+    if( custom_error !== 'custom' ) input.setCustomValidity('');
     validation_message = input.validationMessage;
+
     if( custom_error ) return custom_error;
 
     if( input.value ) {
-
       if( input.validity && !input.validity.valid ) return getValidityError(input.validity);
 
-      return customError( plainValue(input.value), mask_filled, input.value ) || ( _inputMask && !mask_filled && 'uncomplete');
+      return ( options.customError || _noop )( plainValue(input.value), mask_filled, input.value ) || ( _inputMask && !mask_filled && 'uncomplete');
 
-    } else if( input.getAttribute('required') !== null ) return 'required';
-
+    } else if( input.hasAttribute('required') ) return 'required';
   }
 
   if( options.onChange instanceof Function ) listeners.change.push(options.onChange);
 
   function checkValidity () {
     error_key = getErrorKey();
-    runListeners(listeners.change, [plainValue(input.value), mask_filled, error_key, previous_value, validation_message ], input);
+    var custom_error_message = options.getErrorMessage && options.getErrorMessage(error_key);
+    if( custom_error_message ) input.setCustomValidity(custom_error_message);
+    runListeners(listeners.change, [plainValue(input.value), mask_filled, error_key, previous_value, custom_error_message || validation_message ], input);
   }
   setTimeout(checkValidity, 0);
 
@@ -91,15 +83,9 @@ export default function input (input, options) {
     checkValidity();
   }
 
-  function onBlur (e) {
-    if(input.value !== previous_value) onInput(e);
-  }
-
-  if( !input.getAttribute('type') ) input.setAttribute('type', options.type || ( options.number ? 'tel' : 'text' ) );
-
-  input.addEventListener( is_android ? 'keyup' : 'input' , onInput, options.useCapture );
-  input.addEventListener('change' , onInput, options.useCapture );
-  input.addEventListener('blur' , onBlur, options.useCapture );
+  input.addEventListener( is_android ? 'keyup' : 'input' , onInput, options.use_capture );
+  input.addEventListener('change' , onInput, options.use_capture );
+  input.addEventListener('blur' , onInput, options.use_capture );
 
   var component = {
     input: input,
@@ -145,14 +131,14 @@ export default function input (input, options) {
     },
     checkValidity: checkValidity,
     unbind: function () {
-      input.removeEventListener( is_android ? 'keyup' : 'input' , onInput, options.useCapture );
-      input.removeEventListener('blur' , onBlur, options.useCapture );
-      input.removeEventListener('change' , onInput, options.useCapture );
+      input.removeEventListener( is_android ? 'keyup' : 'input' , onInput, options.use_capture );
+      input.removeEventListener('blur' , onBlur, options.use_capture );
+      input.removeEventListener('change' , onInput, options.use_capture );
       return this;
     }
   };
 
-  defineProperty(component, 'value', function () {
+  _defineProperty(component, 'value', function () {
     return plainValue(input.value);
   }, function (value) {
     previous_value = '';
@@ -160,15 +146,15 @@ export default function input (input, options) {
     onInput();
   });
 
-  defineProperty(component, 'filled', function () {
+  _defineProperty(component, 'filled', function () {
     return mask_filled;
   });
 
-  defineProperty(component, 'valid', function () {
+  _defineProperty(component, 'valid', function () {
     return !error_key;
   });
 
-  defineProperty(component, 'model', options.toModel ? function () {
+  _defineProperty(component, 'model', options.toModel ? function () {
     return options.toModel( plainValue(input.value) );
   } : ( options.number ? function () {
     return Number( plainValue(input.value) );
@@ -180,7 +166,7 @@ export default function input (input, options) {
     component.value = model;
   });
 
-  defineProperty(component, 'is_required', function () {
+  _defineProperty(component, 'is_required', function () {
     return input.hasAttribute('required');
   });
 

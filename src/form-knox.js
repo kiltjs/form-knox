@@ -1,5 +1,7 @@
 
-function _noop () {}
+import { _noop, _remove, _defineProperty } from './utils';
+import inputMask from './mask';
+import initInput from './input';
 
 function formParams (form) {
   if( !(form instanceof Element) && form.length ) form = form[0];
@@ -30,12 +32,6 @@ function formSubmitNoValidate (form, valid, e) {
   }
 }
 
-function _remove (list, item) {
-  for( var i = list.length - 1 ; i >= 0 ; i-- ) {
-    if( list[i] === item ) return list.splice(i, 1);
-  }
-}
-
 function runListeners (listeners, args, this_arg) {
   for( var i = 0, n = listeners.length ; i < n ; i++ ) {
     listeners[i].apply(this_arg, args);
@@ -56,13 +52,14 @@ function formBind (form, onSubmit, options) {
   form.addEventListener('submit', function (e) {
     var valid = form.checkValidity();
 
-    if( options.novalidate ) formSubmitNoValidate(form, valid, e);
-    else form.checkValidity();
+    if( options.novalidate ) {
+      if( options.focus_invalid !== false ) formSubmitNoValidate(form, valid, e);
+    } else form.checkValidity();
 
-    if( valid && options.submitting ) setTimeout(function () {
+    if( valid && options.submitting_tweaks ) setTimeout(function () {
       var submit_button = form.querySelector('button[type=submit],[type=submit]');
 
-      if( form.submitting ) {
+      if( form.submitting_tweaks ) {
         if( submit_button ) submit_button.setAttribute('disabled', 'disabled');
 
         form.submitting.then(function (result) {
@@ -106,17 +103,17 @@ function formBind (form, onSubmit, options) {
     },
   };
 
-  Object.defineProperty(instance, 'data', {
-    get: function () { return formParams(form); }
-  });
+  _defineProperty(instance, 'data', function () { return formParams(form); });
 
   return instance;
 }
 
 function formKnox (_env, createMask) {
   var formats = {},
-      env = _env || {},
-      error_messages = {};
+      env = _env || {};
+  // var error_messages = {};
+
+  createMask = createMask || inputMask;
 
   env.defineFormat = function (format_name, format_options) {
     var new_format = Object.create( typeof format_options === 'string' ? { mask: format_options } : format_options );
@@ -128,14 +125,14 @@ function formKnox (_env, createMask) {
     formats[format_name] = new_format;
   };
 
-  env.setErrorMessages = function (format_name, messages) {
-    if( messages === undefined ) error_messages = format_name;
-    else error_messages[format_name] = messages;
-  };
-
-  env.getErrorMessages = function (name) {
-    return error_messages[name] || error_messages.default || null;
-  };
+  // env.setErrorMessages = function (format_name, messages) {
+  //   if( messages === undefined ) error_messages = format_name;
+  //   else error_messages[format_name] = messages;
+  // };
+  //
+  // env.getErrorMessages = function (name) {
+  //   return error_messages[name] || error_messages.default || null;
+  // };
 
   env.getFormat = function (format_name) {
     return formats[format_name];
@@ -146,6 +143,8 @@ function formKnox (_env, createMask) {
 
   return env;
 }
+
+formKnox.initInput = initInput;
 
 formKnox(formKnox);
 
