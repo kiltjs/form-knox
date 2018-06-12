@@ -22,13 +22,14 @@ export default function inputEnv (_env, createMask) {
   };
 
   env.getErrorMessages = function (format_name) {
+    if( !error_messages ) return null;
     return error_messages[format_name] || error_messages.default || null;
   };
 
   env.getFormat = function (format_name) {
     var format = Object.create( formats[format_name] || {} );
     format.getErrorMessages = function () {
-      return error_messages[format_name] || error_messages.default || null;
+      return env.getErrorMessages(format_name);
     };
     return format;
   };
