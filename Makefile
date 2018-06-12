@@ -18,6 +18,7 @@ build: install lint
 	$(shell npm bin)/rollup src/form-knox.js --output.format cjs --output.file dist/form-knox.js
 	$(shell npm bin)/rollup src/input.js --output.format cjs --output.file dist/input.js
 	$(shell npm bin)/rollup src/mask.js --output.format cjs --output.file dist/mask.js
+	$(shell npm bin)/rollup src/env.js --output.format cjs --output.file dist/env.js
 
 mocha:
 	$(shell npm bin)/mocha tests
