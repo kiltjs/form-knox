@@ -43,12 +43,26 @@ function initInput (input, options) {
       } : function (value) { return value; };
 
   var applyMask = _inputMask ? function () {
-    var result = _inputMask(input.value, previous_value);
+    var result;
 
-    if( !result ) return;
+    try {
+      result = _inputMask(input.value, previous_value);
+    } catch (err) {
+      if( typeof err !== 'string' ) throw err;
+      custom_error = err;
+      checkValidity();
+      return;
+    }
 
-    input.value = result.value;
-    mask_filled = result.filled;
+    if( !result && result !== '' ) return;
+
+    if( result.value ) {
+      input.value = result.value;
+      mask_filled = result.filled;
+    } else {
+      input.value = result;
+      mask_filled = false;
+    }
   } : _noop;
 
   function getErrorKey () {

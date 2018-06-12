@@ -2,7 +2,7 @@
 export default function inputEnv (_env, createMask) {
   var formats = {},
       env = _env || {},
-      error_messages = {};
+      error_messages = null;
 
   env.defineFormat = function (format_name, format_options) {
     var new_format = Object.create( typeof format_options === 'string' ? { mask: format_options } : format_options );
@@ -21,8 +21,8 @@ export default function inputEnv (_env, createMask) {
     else error_messages[format_name] = messages;
   };
 
-  env.getErrorMessages = function (name) {
-    return error_messages[name] || error_messages.default || null;
+  env.getErrorMessages = function (format_name) {
+    return error_messages[format_name] || error_messages.default || null;
   };
 
   env.getFormat = function (format_name) {
