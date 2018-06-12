@@ -1,7 +1,5 @@
 
 import { _noop, _remove, _defineProperty } from './utils';
-import inputMask from './mask';
-import initInput from './input';
 
 function formParams (form) {
   if( !(form instanceof Element) && form.length ) form = form[0];
@@ -108,46 +106,6 @@ function formBind (form, onSubmit, options) {
   return instance;
 }
 
-function formKnox (_env, createMask) {
-  var formats = {},
-      env = _env || {};
-  // var error_messages = {};
+formBind.getParams = formParams;
 
-  createMask = createMask || inputMask;
-
-  env.defineFormat = function (format_name, format_options) {
-    var new_format = Object.create( typeof format_options === 'string' ? { mask: format_options } : format_options );
-
-    if( createMask instanceof Function && typeof format_options.mask === 'string' ) new_format.mask = createMask(format_options.mask);
-    else if( new_format.mask instanceof Function ) new_format.mask = format_options.mask;
-    else if( new_format.mask ) throw new Error('mask should be a Function');
-
-    formats[format_name] = new_format;
-  };
-
-  // env.setErrorMessages = function (format_name, messages) {
-  //   if( messages === undefined ) error_messages = format_name;
-  //   else error_messages[format_name] = messages;
-  // };
-  //
-  // env.getErrorMessages = function (name) {
-  //   return error_messages[name] || error_messages.default || null;
-  // };
-
-  env.getFormat = function (format_name) {
-    return formats[format_name];
-  };
-
-  env.form = formBind;
-  env.params = formParams;
-
-  env.initInput = function (input, options) {
-    return initInput(input, options, env);
-  };
-
-  return env;
-}
-
-formKnox(formKnox);
-
-export default formKnox;
+export default formBind;

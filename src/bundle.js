@@ -1,9 +1,11 @@
 
 import formKnox from './form-knox';
-import input from './input';
+import initInput from './input';
+import initEnv from './env';
 import mask from './mask';
 
-formKnox.input = input;
-formKnox.mask = mask;
+var bundle = initEnv(formKnox, mask);
 
-export default formKnox(formKnox, mask);
+bundle.initInput = initInput;
+
+export default bundle;

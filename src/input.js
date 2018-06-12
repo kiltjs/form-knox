@@ -25,7 +25,7 @@ function setInputAttributes (component, attrs) {
   for( var key in attrs ) component.attr(key, attrs[key]);
 }
 
-export default function initInput (input, options) {
+function initInput (input, options) {
   options = options || {};
 
   var previous_value = input.value,
@@ -138,7 +138,7 @@ export default function initInput (input, options) {
     checkValidity: checkValidity,
     unbind: function () {
       input.removeEventListener( is_android ? 'keyup' : 'input' , onInput, options.use_capture );
-      input.removeEventListener('blur' , onBlur, options.use_capture );
+      input.removeEventListener('blur' , onInput, options.use_capture );
       input.removeEventListener('change' , onInput, options.use_capture );
       return this;
     }
@@ -186,3 +186,5 @@ export default function initInput (input, options) {
 
   return component;
 }
+
+export default initInput;
