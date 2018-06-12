@@ -56,7 +56,7 @@ function initInput (input, options) {
 
     if( !result && result !== '' ) return;
 
-    if( result.value ) {
+    if( 'value' in result ) {
       input.value = result.value;
       mask_filled = result.filled;
     } else {
