@@ -17,19 +17,6 @@ function formParams (form) {
   return data;
 }
 
-function formSubmitNoValidate (form, valid, e) {
-  if( valid ) e.preventDefault();
-  else if( form.getAttribute('novalidate') !== null ) {
-    form.removeAttribute('novalidate');
-    e.preventDefault();
-    setTimeout(function () {
-      var submit_button = form.querySelector('button[type=submit],[type=submit]');
-      if( submit_button ) submit_button.click();
-      form.setAttribute('novalidate', 'novalidate');
-    });
-  }
-}
-
 function runListeners (listeners, args, this_arg) {
   for( var i = 0, n = listeners.length ; i < n ; i++ ) {
     listeners[i].apply(this_arg, args);
@@ -38,53 +25,40 @@ function runListeners (listeners, args, this_arg) {
 
 function formBind (form, onSubmit, options) {
   options = options || {};
+
   if( !(onSubmit instanceof Function) ) {
     options = onSubmit || options;
     onSubmit = _noop;
   }
 
-  var listeners = { valid: [], invalid: [], reset: [] };
+  if( options.novalidate ) form.setAttribute('novalidate', '');
 
-  if( options.novalidate ) form.setAttribute('novalidate', 'novalidate');
+  var listeners = { invalid: [], reset: [], submitting: [] },
+      _onSubmit = function (e) {
 
-  form.addEventListener('submit', function (e) {
-    var valid = form.checkValidity();
+        if( form.hasAttribute('novalidate') ) {
+          var valid = form.checkValidity(),
+              input_invalid = form.querySelector(':invalid');
 
-    if( options.novalidate ) {
-      if( options.focus_invalid !== false ) formSubmitNoValidate(form, valid, e);
-    } else form.checkValidity();
+          onSubmit(e, valid);
+          if( e.defaultPrevented ) return;
 
-    if( valid && options.submitting_tweaks ) setTimeout(function () {
-      var submit_button = form.querySelector('button[type=submit],[type=submit]');
+          if( !valid ) runListeners( listeners.invalid, [], form);
+          runListeners( listeners.submitting, [valid], form);
 
-      if( form.submitting_tweaks ) {
-        if( submit_button ) submit_button.setAttribute('disabled', 'disabled');
+          if( options.focus_invalid && input_invalid ) input_invalid.focus();
 
-        form.submitting.then(function (result) {
-          if( result !== 'no_redirect' ) submit_button.removeAttribute('disabled');
-        }, function () {
-          submit_button.removeAttribute('disabled');
-        });
+        } else {
+          runListeners( listeners.submitting, [true], form);
+          onSubmit(e, true);
+        }
 
-        options.submitting(form.submitting);
-      }
-    }, 0);
+      };
 
-    runListeners( listeners[ valid ? 'valid' : 'invalid' ], [], form);
-
-    if( options.onInvalid && !valid ) {
-      return options.onInvalid(e);
-    }
-
-    if( options.focus_invalid !== false && form.querySelector(':invalid') ) {
-      form.querySelector(':invalid').focus();
-    }
-
-    onSubmit(e, valid);
-  }, true);
-
-  form.addEventListener('reset', function () {
-    runListeners( listeners[ form.checkValidity() ? 'valid' : 'invalid' ], [], form);
+  form.addEventListener('submit', _onSubmit, true);
+  form.addEventListener('invalid', function () {
+    runListeners( listeners.invalid, [], form);
+    if( !form.hasAttribute('novalidate') ) runListeners( listeners.submitting, [false], form);
   });
 
   var instance = {
@@ -101,7 +75,12 @@ function formBind (form, onSubmit, options) {
     },
   };
 
-  _defineProperty(instance, 'data', function () { return formParams(form); });
+  _defineProperty(instance, 'data', function () {
+    if( options.processParams ) {
+      return options.processParams( formParams(form) );
+    }
+    return formParams(form);
+  });
 
   return instance;
 }
