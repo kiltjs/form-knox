@@ -115,12 +115,12 @@ function initInput (input, options) {
       input.setCustomValidity(message);
       // custom_error = 'custom';
       // checkValidity();
-      return this;
+      return component;
     },
     setError: function (error_key) {
       custom_error = error_key;
       checkValidity();
-      return this;
+      return component;
     },
     setRequired: function (required) {
       custom_error = null;
@@ -130,31 +130,31 @@ function initInput (input, options) {
         input.removeAttribute('required');
       }
       checkValidity();
-      return this;
+      return component;
     },
     attr: function (key, value) {
       if( value === undefined ) return input.getAttribute(key);
       else if( value === null ) input.removeAttribute(key);
       else input.setAttribute(key, value);
       checkValidity();
-      return this;
+      return component;
     },
     on: function (event_name, listener, use_capture) {
       if( listeners[event_name] ) listeners[event_name].push(listener);
       else input.addEventListener(event_name, listener, use_capture);
-      return this;
+      return component;
     },
     off: function (event_name, listener, use_capture) {
       if( listeners[event_name] ) _remove(listeners[event_name], listener);
       else input.removeEventListener(event_name, listener, use_capture);
-      return this;
+      return component;
     },
     checkValidity: checkValidity,
     unbind: function () {
       input.removeEventListener( is_android ? 'keyup' : 'input' , onInput, options.use_capture );
       input.removeEventListener('blur' , onInput, options.use_capture );
       input.removeEventListener('change' , onInput, options.use_capture );
-      return this;
+      return component;
     }
   };
 
