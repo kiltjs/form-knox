@@ -78,7 +78,7 @@ function initInput (input, options) {
       ) || (
         input.validity && !input.validity.valid && getValidityError(input.validity)
       ) || (
-        _inputMask && !mask_filled && 'uncomplete'
+        _inputMask && !mask_filled && mask_filled !== null && 'uncomplete'
       );
 
     } else if( input.hasAttribute('required') ) return 'required';
