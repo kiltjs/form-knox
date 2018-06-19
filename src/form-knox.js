@@ -34,6 +34,7 @@ function formBind (form, onSubmit, options) {
   if( options.novalidate ) form.setAttribute('novalidate', '');
 
   var listeners = { invalid: [], reset: [], submitting: [] },
+      use_capture = options.use_capture || options.use_capture === undefined,
       _onSubmit = function (e) {
 
         if( form.hasAttribute('novalidate') ) {
@@ -55,11 +56,15 @@ function formBind (form, onSubmit, options) {
 
       };
 
-  form.addEventListener('submit', _onSubmit, options.use_capture || options.use_capture === undefined );
-  form.addEventListener('invalid', function () {
+  form.addEventListener('submit', _onSubmit, use_capture );
+  form.addEventListener('invalid', function _onInvalid () {
     runListeners( listeners.invalid, [], form);
     if( !form.hasAttribute('novalidate') ) runListeners( listeners.submitting, [false], form);
-  });
+    form.removeEventListener('invalid', _onInvalid, use_capture);
+    setTimeout(function () {
+      form.addEventListener('invalid', _onInvalid, use_capture);
+    });
+  }, use_capture);
 
   var instance = {
     form: form,
