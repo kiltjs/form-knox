@@ -55,7 +55,7 @@ function formBind (form, onSubmit, options) {
 
       };
 
-  form.addEventListener('submit', _onSubmit, true);
+  form.addEventListener('submit', _onSubmit, options.use_capture || options.use_capture === undefined );
   form.addEventListener('invalid', function () {
     runListeners( listeners.invalid, [], form);
     if( !form.hasAttribute('novalidate') ) runListeners( listeners.submitting, [false], form);
