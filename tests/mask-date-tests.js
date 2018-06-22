@@ -1,7 +1,7 @@
 /* global describe, it */
 
-var assert = require('assert'),
-    inputMask = require('../dist/mask');
+import assert from 'assert';
+import inputMask from '../src/mask';
 
 describe('date', function () {
 

@@ -9,21 +9,19 @@ install:
 lint:
 	$(shell npm bin)/eslint form-knox.js input.js mask.js tests/**
 
-build: install lint
+mocha:
+	$(shell npm bin)/mocha --require babel-core/register tests
+
+test: lint mocha
+
+build: install test
+	@# $(shell npm bin)/rollup src/form-knox.js --output.format cjs --output.file dist/form-knox.js
+
 	mkdir -p dist
-	# $(shell npm bin)/rollup src/bundle.js --output.format cjs --output.file dist/bundle.js
-	cp src/bundle.cjs.js dist/bundle.js
+
+	$(shell npm bin)/babel src --out-dir dist
 	$(shell npm bin)/rollup src/bundle.js --output.format umd --output.file dist/bundle.umd.js -n formKnox
 
-	$(shell npm bin)/rollup src/form-knox.js --output.format cjs --output.file dist/form-knox.js
-	$(shell npm bin)/rollup src/input.js --output.format cjs --output.file dist/input.js
-	$(shell npm bin)/rollup src/mask.js --output.format cjs --output.file dist/mask.js
-	$(shell npm bin)/rollup src/env.js --output.format cjs --output.file dist/env.js
-
-mocha:
-	$(shell npm bin)/mocha tests
-
-test: build mocha
 
 # publish.release:
 # 	@echo "\nrunning https://gist.githubusercontent.com/jgermade/d394e47341cf761286595ff4c865e2cd/raw/\n"
