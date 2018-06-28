@@ -7,7 +7,7 @@ install:
 	npm install
 
 lint:
-	$(shell npm bin)/eslint form-knox.js input.js mask.js tests/**
+	$(shell npm bin)/eslint src/** tests/**
 
 mocha:
 	$(shell npm bin)/mocha --require babel-core/register tests
