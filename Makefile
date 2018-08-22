@@ -49,21 +49,23 @@ npm.publish: test npm.pushVersion git.tag
 	cp README.md dist/README.md
 	cp package.json dist/package.json
 	cp -r src dist/es6
-	cd dist && npm publish
+	- cd dist && npm publish --access public
+	- node -e "var fs = require('fs'); var pkg = require('./package.json'); pkg.name = 'form-knox'; fs.writeFile('./package.json', JSON.stringify(pkg, null, '  '), 'utf8', function (err) { if( err ) console.log('Error: ' + err); });"
+	- cd dist && npm publish
+
+github.release: export REPOSITORY="kiltjs/form-knox"
+github.release: export PKG_VERSION=$(shell node -e "process.stdout.write('v'+require('./package.json').version);")
+github.release: export RELEASE_URL=$(shell curl -s -X POST -H "Content-Type: application/json" -H "Authorization: Bearer ${GITHUB_TOKEN}" \
+	-d '{"tag_name": "${PKG_VERSION}", "target_commitish": "$(git_branch)", "name": "${PKG_VERSION}", "body": "", "draft": false, "prerelease": false}' \
+	-w '%{url_effective}' "https://api.github.com/repos/${REPOSITORY}/releases" )
+github.release:
+	@echo ${RELEASE_URL}
 
 	git reset --soft HEAD~1
 	git reset HEAD
 	# git reset --hard origin/$(git_branch)
 	@git checkout $(git_branch)
-
-github.release: export PKG_NAME=$(shell node -e "console.log(require('./package.json').name);")
-github.release: export PKG_VERSION=$(shell node -e "process.stdout.write('v'+require('./package.json').version);")
-github.release: export RELEASE_URL=$(shell curl -s -X POST -H "Content-Type: application/json" -H "Authorization: Bearer ${GITHUB_TOKEN}" \
-	-d '{"tag_name": "${PKG_VERSION}", "target_commitish": "$(git_branch)", "name": "${PKG_VERSION}", "body": "", "draft": false, "prerelease": false}' \
-	-w '%{url_effective}' "https://api.github.com/repos/kiltjs/form-knox/releases" )
-github.release:
-	@echo ${RELEASE_URL}
-	@true
+	@echo "\nhttps://github.com/kiltjs/jqnano/releases/tag/${PKG_VERSION}\n"
 
 release: npm.publish github.release
 

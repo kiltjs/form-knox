@@ -1,5 +1,5 @@
 {
-  "name": "form-knox",
+  "name": "@kilt/form-knox",
   "version": "1.0.72",
   "description": "form validity helper and input mask parser",
   "main": "bundle.js",
@@ -10,12 +10,12 @@
   "author": "Jesús Germade <jesus@germade.es>",
   "license": "MIT",
   "devDependencies": {
-    "babel-cli": "^6.26.0",
-    "babel-plugin-add-module-exports": "^0.2.1",
-    "babel-preset-env": "^1.7.0",
+    "babel-cli": "6.26.0",
+    "babel-plugin-add-module-exports": "0.2.1",
+    "babel-preset-env": "1.7.0",
     "eslint": "5.0.1",
-    "mocha": "5.2.0",
-    "rollup": "0.62.0"
+    "mocha": "5.4.0",
+    "rollup": "0.64.1"
   },
   "babel": {
     "presets": [
