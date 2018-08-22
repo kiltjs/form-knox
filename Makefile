@@ -45,12 +45,13 @@ git.tag:
 	git push --tags
 	# git push origin $(git_branch)
 
+npm.publish: export LEGACY_PKG_NAME="form-knox"
 npm.publish: test npm.pushVersion git.tag
 	cp README.md dist/README.md
 	cp package.json dist/package.json
 	cp -r src dist/es6
 	- cd dist && npm publish --access public
-	- node -e "var fs = require('fs'); var pkg = require('./package.json'); pkg.name = 'form-knox'; fs.writeFile('./package.json', JSON.stringify(pkg, null, '  '), 'utf8', function (err) { if( err ) console.log('Error: ' + err); });"
+	- node -e "var fs = require('fs'); var pkg = require('./package.json'); pkg.name = '${LEGACY_PKG_NAME}'; fs.writeFile('./package.json', JSON.stringify(pkg, null, '  '), 'utf8', function (err) { if( err ) console.log('Error: ' + err); });"
 	- cd dist && npm publish
 
 github.release: export REPOSITORY="kiltjs/form-knox"
