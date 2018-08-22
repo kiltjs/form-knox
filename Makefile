@@ -53,6 +53,7 @@ npm.publish: test npm.pushVersion git.tag
 	- cd dist && npm publish --access public
 	- node -e "var fs = require('fs'); var pkg = require('./package.json'); pkg.name = '${LEGACY_PKG_NAME}'; fs.writeFile('./package.json', JSON.stringify(pkg, null, '  '), 'utf8', function (err) { if( err ) console.log('Error: ' + err); });"
 	- cd dist && npm publish
+	- git checkout package.json
 
 github.release: export REPOSITORY="kiltjs/form-knox"
 github.release: export PKG_VERSION=$(shell node -e "process.stdout.write('v'+require('./package.json').version);")
