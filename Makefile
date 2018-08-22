@@ -47,13 +47,14 @@ git.tag:
 
 npm.publish: export LEGACY_PKG_NAME=form-knox
 npm.publish: test npm.pushVersion git.tag
-	cp README.md dist/README.md
-	cp package.json dist/package.json
+	cp LICENSE dist
+	cp README.md dist
+	cp package.json dist
 	cp -r src dist/es6
 	- cd dist && npm publish --access public
-	- node -e "var fs = require('fs'); var pkg = require('./package.json'); pkg.name = '${LEGACY_PKG_NAME}'; fs.writeFile('./package.json', JSON.stringify(pkg, null, '  '), 'utf8', function (err) { if( err ) console.log('Error: ' + err); });"
+	- node -e "var fs = require('fs'); var pkg = require('./dist/package.json'); pkg.name = '${LEGACY_PKG_NAME}'; fs.writeFile('./dist/package.json', JSON.stringify(pkg, null, '  '), 'utf8', function (err) { if( err ) console.log('Error: ' + err); });"
 	- cd dist && npm publish
-	- git checkout package.json
+	cp package.json dist
 
 github.release: export REPOSITORY=kiltjs/form-knox
 github.release: export PKG_VERSION=$(shell node -e "process.stdout.write('v'+require('./package.json').version);")
@@ -67,7 +68,7 @@ github.release:
 	git reset HEAD
 	# git reset --hard origin/$(git_branch)
 	@git checkout $(git_branch)
-	@echo "\nhttps://github.com/kiltjs/jqnano/releases/tag/${PKG_VERSION}\n"
+	@echo "\nhttps://github.com/kiltjs/form-knox/releases/tag/${PKG_VERSION}\n"
 
 release: npm.publish github.release
 
