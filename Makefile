@@ -45,7 +45,7 @@ git.tag:
 	git push --tags
 	# git push origin $(git_branch)
 
-npm.publish: export LEGACY_PKG_NAME="form-knox"
+npm.publish: export LEGACY_PKG_NAME=form-knox
 npm.publish: test npm.pushVersion git.tag
 	cp README.md dist/README.md
 	cp package.json dist/package.json
@@ -55,7 +55,7 @@ npm.publish: test npm.pushVersion git.tag
 	- cd dist && npm publish
 	- git checkout package.json
 
-github.release: export REPOSITORY="kiltjs/form-knox"
+github.release: export REPOSITORY=kiltjs/form-knox
 github.release: export PKG_VERSION=$(shell node -e "process.stdout.write('v'+require('./package.json').version);")
 github.release: export RELEASE_URL=$(shell curl -s -X POST -H "Content-Type: application/json" -H "Authorization: Bearer ${GITHUB_TOKEN}" \
 	-d '{"tag_name": "${PKG_VERSION}", "target_commitish": "$(git_branch)", "name": "${PKG_VERSION}", "body": "", "draft": false, "prerelease": false}' \
