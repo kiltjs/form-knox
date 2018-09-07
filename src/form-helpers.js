@@ -27,7 +27,7 @@ function setKey (o, key, value) {
   _setKey(o, key.replace(/^\[|\]$/g, '').replace(/\]\[|\[|\]/g, '.').split('.'), value );
 }
 
-export function formParams (form, selector) {
+export function formData (form, selector) {
   if( !(form instanceof HTMLElement) && form.length ) form = form[0];
   if( !(form instanceof HTMLElement) ) throw new TypeError('parent node should be an HTMLElement');
 
