@@ -1,4 +1,6 @@
 
+import {formParams, enableInputs, disableInputs, readonlyInputs, editableInputs} from './form-helpers';
+
 export default function inputEnv (_env, createMask) {
   var formats = {},
       env = _env || {},
@@ -35,6 +37,12 @@ export default function inputEnv (_env, createMask) {
   };
 
   env.createMask = createMask;
+  env.getParams = formParams;
+
+  env.enable = enableInputs;
+  env.disable = disableInputs;
+  env.setReadonly = readonlyInputs;
+  env.setEditable = editableInputs;
 
   return env;
 }
