@@ -1,6 +1,6 @@
 
 import { _noop, _remove, _defineProperty } from './utils';
-import {formParams} from './form-helpers';
+import {formData} from './form-helpers';
 
 function runListeners (listeners, args, this_arg) {
   for( var i = 0, n = listeners.length ; i < n ; i++ ) {
@@ -67,9 +67,9 @@ function formBind (form, onSubmit, options) {
 
   _defineProperty(instance, 'data', function () {
     if( options.processParams ) {
-      return options.processParams( formParams(form) );
+      return options.processParams( formData(form) );
     }
-    return formParams(form);
+    return formData(form);
   });
 
   return instance;
