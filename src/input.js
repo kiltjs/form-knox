@@ -6,15 +6,18 @@ import { _noop, is_android, _remove, _defineProperty } from './utils';
 // https://developer.mozilla.org/en-US/docs/Learn/HTML/Forms/HTML5_updates#Constraint_Validation_API
 // https://developer.mozilla.org/es/docs/Web/API/ValidityState
 
-var _emitEvent = 'CustomEvent' in window ? function (event_name, node) {
-  node.dispatchEvent( new CustomEvent(event_name) );
-} : ( document.createEvent ? function (event_name, node) {
+// not working:
+// 'CustomEvent' in window => function (event_name, node) {
+//   node.dispatchEvent( new CustomEvent(event_name) );
+// }
+
+var _emitEvent = document.createEvent ? function (event_name, node) {
   var event = document.createEvent('HTMLEvents');
   event.initEvent(event_name, true, true);
   node.dispatchEvent(event);
 } : function (event_name, node) {
   node.fireEvent('on' + event_name, document.createEventObject() );
-});
+};
 
 function getValidityError (validity) {
   for( var key in validity ) {
