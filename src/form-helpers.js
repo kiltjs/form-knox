@@ -10,6 +10,23 @@ function _getInputValue (input) {
 
 var _each = Array.prototype.forEach;
 
+
+
+function _setKey (o, keys, value) {
+  var key = keys.shift();
+  if( !key ) throw new Error('keys length should be at least 1');
+  if( !keys.length ) {
+    o[key] = value;
+  } else {
+    o[key] = o[key] || {};
+    _setKey(o[key], keys, value);
+  }
+}
+
+function setKey (o, key, value) {
+  _setKey(o, key.replace(/^\[|\]$/g, '').replace(/\]\[|\[|\]/g, '.').split('.'), value );
+}
+
 export function formParams (form, selector) {
   if( !(form instanceof HTMLElement) && form.length ) form = form[0];
   if( !(form instanceof HTMLElement) ) throw new TypeError('parent node should be an HTMLElement');
@@ -20,14 +37,13 @@ export function formParams (form, selector) {
     if( !input.name || input.hasAttribute('disabled') || input.type === 'submit' ) return;
 
     if( input.nodeName === 'SELECT' ) {
-      data[input.name] = input.selectedIndex ? _getInputValue(input.options[input.selectedIndex]) : null;
+      setKey(data, input.name, input.selectedIndex ? _getInputValue(input.options[input.selectedIndex]) : null);
     } else if( input.type === 'radio' ) {
-      if( input.checked ) data[input.name] = _getInputValue(input);
+      if( input.checked ) setKey(data, input.name, _getInputValue(input) );
     } else if( input.type === 'radio' ) {
-      if( 'model' in input ) _getInputModel(input);
-      else data[input.name] = input.checked;
+      setKey( data, input.name, 'model' in input ? _getInputModel(input) : input.checked );
     } else {
-      data[input.name] = _getInputValue(input);
+      setKey( data, input.name, _getInputValue(input) );
     }
 
   });
