@@ -200,9 +200,14 @@ function initInput (input, options) {
     component.value = model;
   });
 
-  if( options.bind_model !== false ) _defineProperty(input, 'model', function () {
-    return component.model;
-  });
+  if( options.bind_model !== false ) {
+    _defineProperty(input, 'model', function () {
+      return component.model;
+    });
+    _defineProperty(input, 'is_filled', function () {
+      return mask_filled;
+    });
+  }
 
   _defineProperty(component, 'is_required', function () {
     return input.hasAttribute('required');
