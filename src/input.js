@@ -186,6 +186,10 @@ function initInput (input, options) {
     component.value = model;
   });
 
+  if( options.bind_model !== false ) _defineProperty(input, 'model', function () {
+    return component.model;
+  });
+
   _defineProperty(component, 'is_required', function () {
     return input.hasAttribute('required');
   });
