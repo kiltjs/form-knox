@@ -37,7 +37,7 @@ export default function inputEnv (_env, createMask) {
   };
 
   env.createMask = createMask;
-  env.getParams = formData;
+  env.getData = formData;
 
   env.enable = enableInputs;
   env.disable = disableInputs;
