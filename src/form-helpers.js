@@ -40,7 +40,7 @@ export function formData (form, selector) {
       setKey(data, input.name, input.selectedIndex ? _getInputValue(input.options[input.selectedIndex]) : null);
     } else if( input.type === 'radio' ) {
       if( input.checked ) setKey(data, input.name, _getInputValue(input) );
-    } else if( input.type === 'radio' ) {
+    } else if( input.type === 'checkbox' ) {
       setKey( data, input.name, 'model' in input ? _getInputModel(input) : input.checked );
     } else {
       setKey( data, input.name, _getInputValue(input) );
