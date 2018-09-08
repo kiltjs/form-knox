@@ -61,7 +61,7 @@ github.release: export PKG_VERSION=$(shell node -e "process.stdout.write('v'+req
 github.release: export RELEASE_URL=$(shell curl -s -X POST -H "Content-Type: application/json" -H "Authorization: Bearer ${GITHUB_TOKEN}" \
 	-d '{"tag_name": "${PKG_VERSION}", "target_commitish": "$(git_branch)", "name": "${PKG_VERSION}", "body": "", "draft": false, "prerelease": false}' \
 	-w '%{url_effective}' "https://api.github.com/repos/${REPOSITORY}/releases" )
-github.release: build
+github.release:
 	@echo ${RELEASE_URL}
 
 	git reset --soft HEAD~1
@@ -70,6 +70,6 @@ github.release: build
 	@git checkout $(git_branch)
 	@echo "\nhttps://github.com/kiltjs/form-knox/releases/tag/${PKG_VERSION}\n"
 
-release: npm.publish github.release
+release: build npm.publish github.release
 
 .DEFAULT_GOAL := build
