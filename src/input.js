@@ -203,6 +203,8 @@ function initInput (input, options) {
   if( options.bind_model !== false ) {
     _defineProperty(input, 'model', function () {
       return component.model;
+    }, function (model) {
+      component.value = model;
     });
     _defineProperty(input, 'is_filled', function () {
       return mask_filled;
