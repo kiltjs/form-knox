@@ -1,6 +1,6 @@
 {
   "name": "@kilt/form-knox",
-  "version": "1.0.93",
+  "version": "1.0.94",
   "description": "form validity helper and input mask parser",
   "main": "bundle.js",
   "scripts": {
