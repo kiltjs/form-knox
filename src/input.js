@@ -204,7 +204,7 @@ function initInput (input, options) {
     _defineProperty(input, 'model', function () {
       return component.model;
     }, function (model) {
-      component.value = model;
+      component.model = model;
     });
     _defineProperty(input, 'is_filled', function () {
       return mask_filled;
