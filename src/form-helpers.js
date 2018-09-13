@@ -34,6 +34,8 @@ export function formData (form, selector) {
   var data = {};
   _each.call(form.querySelectorAll(selector === true ? 'input, select' : (selector || 'input:not([disabled]), select:not([disabled])') ), function (input) {
 
+    if( !input.name ) return;
+
     if( input.nodeName === 'SELECT' ) {
       setKey(data, input.name, input.selectedIndex ? _getInputValue(input.options[input.selectedIndex]) : null);
     } else if( input.type === 'radio' ) {
