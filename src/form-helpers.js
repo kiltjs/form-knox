@@ -32,9 +32,7 @@ export function formData (form, selector) {
   if( !(form instanceof HTMLElement) ) throw new TypeError('parent node should be an HTMLElement');
 
   var data = {};
-  _each.call(form.querySelectorAll(selector || 'input, select'), function (input) {
-
-    if( !input.name || input.hasAttribute('disabled') || input.type === 'submit' ) return;
+  _each.call(form.querySelectorAll(selector || 'input:not([disabled]), select:not([disabled])'), function (input) {
 
     if( input.nodeName === 'SELECT' ) {
       setKey(data, input.name, input.selectedIndex ? _getInputValue(input.options[input.selectedIndex]) : null);
