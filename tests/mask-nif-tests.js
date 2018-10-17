@@ -16,28 +16,28 @@ describe('nif', function () {
   it('should return formatted nif (flat input lowercase)', function () {
 
     assert.strictEqual( nif('12345678z').value, '12345678 Z' );
-    assert( nif('12345678z').filled );
+    assert.strictEqual( nif('12345678z').filled, true );
 
   });
 
   it('should return formatted nif (flat input)', function () {
 
     assert.strictEqual( nif('12345678Z').value, '12345678 Z' );
-    assert( nif('12345678Z').filled );
+    assert.strictEqual( nif('12345678Z').filled, true );
 
   });
 
   it('should return formatted nif (formatted input lowercase)', function () {
 
     assert.strictEqual( nif('12345678 z').value, '12345678 Z' );
-    assert( nif('12345678 z').filled );
+    assert.strictEqual( nif('12345678 z').filled, true );
 
   });
 
   it('should return formatted nif (formatted input)', function () {
 
     assert.strictEqual( nif('12345678 Z').value, '12345678 Z' );
-    assert( nif('12345678 Z').filled );
+    assert.strictEqual( nif('12345678 Z').filled, true );
 
   });
 
@@ -50,10 +50,10 @@ describe('nif', function () {
   it('should remove last separator (input + previousInput)', function () {
 
     assert.strictEqual( nif('12345678', '12345678 ').value, '1234567' );
-    assert( !nif('12345678', '12345678 ').filled );
+    assert.strictEqual( nif('12345678', '12345678 ').filled, false );
 
     assert.strictEqual( nif('1234567', '12345678').value, '1234567' );
-    assert( !nif('1234567', '12345678').filled );
+    assert.strictEqual( nif('1234567', '12345678').filled, false );
 
   });
 
