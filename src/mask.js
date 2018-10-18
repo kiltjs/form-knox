@@ -57,7 +57,7 @@ export default function inputMask (pattern) {
 
       while( typeof token === 'string' ) {
         result += token;
-        if( token === letter ) letter = letters[++i];
+        if( (i || i === (t - 1) ) && token === letter ) letter = letters[++i];
         token = tokens[t++];
       }
 
