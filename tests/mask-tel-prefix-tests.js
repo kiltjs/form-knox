@@ -11,6 +11,7 @@ describe('tel prefix', function () {
 
     assert.strictEqual( tel('').value, '' );
     assert.strictEqual( tel('+').value, '+34 ' );
+    assert.strictEqual( tel('3').value, '+34 3' );
     assert.strictEqual( tel('+34 55').value, '+34 55' );
     assert.strictEqual( tel('+34 55').plain, '55' );
     assert.strictEqual( tel('+34', '+34 ').value, '' );
