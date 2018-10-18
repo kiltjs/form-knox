@@ -181,6 +181,7 @@ function initInput (input, options) {
   }, function (value) {
     previous_value = '';
     input.value = value || '';
+    previous_value = input.value;
     onInput();
   });
 
@@ -199,10 +200,8 @@ function initInput (input, options) {
   } : function () {
     return plainValue(input.value);
   }), options.fromModel ? function (model) {
-    previous_value = options.fromModel(model);
-    component.value = previous_value;
+    component.value = options.fromModel(model);
   } : function (model) {
-    previous_value = model;
     component.value = model;
   });
 
