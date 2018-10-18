@@ -180,7 +180,7 @@ function initInput (input, options) {
   }, function (value) {
     previous_value = '';
     input.value = value || '';
-    previous_value = input.value;
+    // previous_value = input.value; // needs to be triggered, p.e. add _is-not_empty class 
     onInput();
   });
 
