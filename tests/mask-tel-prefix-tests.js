@@ -19,6 +19,9 @@ describe('tel prefix', function () {
     assert.strictEqual( tel('6').value, '+34 6' );
     assert.strictEqual( tel('6').plain, '6' );
 
+    assert.strictEqual( tel('+34 123 ', '+34 123 4').value, '+34 123 ' );
+    assert.strictEqual( tel('+34 123 ', '+34 123 4').plain, '123' );
+
   });
 
   it('should return formatted telephone (flat input)', function () {

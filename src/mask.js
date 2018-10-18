@@ -45,11 +45,22 @@ export default function inputMask (pattern) {
         result_no_tail = '',
         result = '',
         plain = '',
-        is_deleting = false;
+        delete_last_token = false;
 
     if( !value ) return { value: '', plain: '', filled: false };
 
-    if( typeof previous_value === 'string' && previous_value.indexOf(value) === 0 ) is_deleting = true;
+    if( typeof previous_value === 'string' && previous_value.indexOf(value) === 0  && typeof tokens[previous_value.length - 1] === 'string' ) delete_last_token = true;
+
+    // if( typeof previous_value === 'string' && previous_value.indexOf(value) === 0 ) {
+    //   while( typeof tokens[value.length - 1] === 'string' ) {
+    //     value = value.substr(0, value.length - 1);
+    //   }
+    //   return {
+    //     value: value,
+    //     plain: plain,
+    //     filled: false,
+    //   };
+    // }
 
     for( var i = 0, t = 0, n = letters.length, letter, token ; i < n ; i++ ) {
       letter = letters[i];
@@ -74,7 +85,7 @@ export default function inputMask (pattern) {
           index: t - 1,
           match: token.source.replace(/^\[|\]$/g, ''),
         },
-        value: is_deleting ? result_no_tail : result,
+        value: result,
         plain: plain,
         filled: false,
       };
@@ -86,13 +97,12 @@ export default function inputMask (pattern) {
       token = tokens[t++];
     }
 
-    if( is_deleting && result.length > result_no_tail.length ) value = result_no_tail.substr(0, result_no_tail.length - 1);
-    else value = result;
+    if( delete_last_token ) result = result_no_tail.substr(0, result_no_tail.length - 1);
 
     return {
-      value: value,
-      plain: is_deleting ? plain.substr(0, plain.length - 1) : plain,
-      filled: value.length === tokens.length,
+      value: result,
+      plain: delete_last_token ? plain.substr(0, plain.length - 1) : plain,
+      filled: result.length === tokens.length,
     };
   };
 }
