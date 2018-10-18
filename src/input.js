@@ -101,10 +101,13 @@ function initInput (input, options) {
   if( options.onChange instanceof Function ) listeners.change.push(options.onChange);
 
   function checkValidity () {
+    var previous_error_key;
     error_key = getErrorKey();
     var custom_error_message = options.getErrorMessage && options.getErrorMessage(error_key);
     if( custom_error_message ) input.setCustomValidity(custom_error_message);
-    runListeners(listeners.change, [plainValue(input.value), mask_filled, error_key, previous_value, custom_error_message || validation_message ], input);
+    if( input.value !== previous_value || error_key !== previous_error_key ) {
+      runListeners(listeners.change, [plainValue(input.value), mask_filled, error_key, previous_value, custom_error_message || validation_message ], input);
+    }
   }
   setTimeout(checkValidity, 0);
 
@@ -196,8 +199,10 @@ function initInput (input, options) {
   } : function () {
     return plainValue(input.value);
   }), options.fromModel ? function (model) {
-    component.value = options.fromModel(model);
+    previous_value = options.fromModel(model);
+    component.value = previous_value;
   } : function (model) {
+    previous_value = model;
     component.value = model;
   });
 
