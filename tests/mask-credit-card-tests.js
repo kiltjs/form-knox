@@ -16,24 +16,24 @@ describe('credit card', function () {
   it('should return formatted credit card (flat input)', function () {
 
     assert.strictEqual( cc('5555555555554444').value, '5555 5555 5555 4444' );
-    assert( cc('5555555555554444').filled );
+    assert.strictEqual( cc('5555555555554444').filled, true, 'filled' );
 
   });
 
   it('should return formatted credit card (formatted input)', function () {
 
     assert.strictEqual( cc('5555 5555 5555 4444').value, '5555 5555 5555 4444' );
-    assert( cc('5555 5555 5555 4444').filled );
+    assert.strictEqual( cc('5555 5555 5555 4444').filled, true, 'filled' );
 
   });
 
   it('should return partial formatted credit card (partial input)', function () {
 
-    assert.strictEqual( cc('5555').value, '5555 ' );
-    assert.strictEqual( cc('55555555').value, '5555 5555 ' );
-    assert.strictEqual( cc('5555 5555').value, '5555 5555 ' );
-    assert.strictEqual( cc('555555555555').value, '5555 5555 5555 ' );
-    assert.strictEqual( cc('5555 5555 5555').value, '5555 5555 5555 ' );
+    assert.strictEqual( cc('5555').value, '5555 ', '\'5555 \'' );
+    assert.strictEqual( cc('55555555').value, '5555 5555 ', '\'5555 5555 \'' );
+    assert.strictEqual( cc('5555 5555').value, '5555 5555 ', '\'5555 5555 \'' );
+    assert.strictEqual( cc('555555555555').value, '5555 5555 5555 ', '\'5555 5555 5555 \'' );
+    assert.strictEqual( cc('5555 5555 5555').value, '5555 5555 5555 ', '\'5555 5555 5555 \'' );
 
   });
 

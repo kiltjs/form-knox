@@ -16,17 +16,17 @@ describe('tel', function () {
   it('should return formatted telephone (flat input)', function () {
 
     assert.strictEqual( tel('123456789').value, '123 456 789' );
-    assert( tel('123456789').filled );
+    assert.strictEqual( tel('123456789').filled, true, 'filled' );
 
     assert.strictEqual( tel('12345678901234').value, '123 456 789' );
-    assert( tel('12345678901234').filled );
+    assert.strictEqual( tel('12345678901234').filled, true, 'filled' );
 
   });
 
   it('should return formatted telephone (formatted input)', function () {
 
     assert.strictEqual( tel('123 456 789').value, '123 456 789' );
-    assert( tel('123 456 789').filled );
+    assert.strictEqual( tel('123 456 789').filled, true, 'filled' );
 
   });
 
