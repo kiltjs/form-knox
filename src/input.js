@@ -11,11 +11,11 @@ import { _noop, is_android, _remove, _defineProperty } from './utils';
 //   node.dispatchEvent( new CustomEvent(event_name) );
 // }
 
-var _emitEvent = document.createEvent ? function (event_name, node) {
+var _emitEvent = document.createEvent ? function (node, event_name) {
   var event = document.createEvent('HTMLEvents');
   event.initEvent(event_name, true, true);
   node.dispatchEvent(event);
-} : function (event_name, node) {
+} : function (node, event_name) {
   node.fireEvent('on' + event_name, document.createEventObject() );
 };
 
@@ -72,6 +72,7 @@ function initInput (input, options) {
     if( 'value' in result ) {
       input.value = result.value;
       mask_filled = result.filled;
+      if( result.expected && options.onExpected instanceof Function ) options.onExpected(result.expected, result);
     } else {
       input.value = result;
       mask_filled = false;
@@ -113,7 +114,7 @@ function initInput (input, options) {
     applyMask();
     previous_value = input.value;
     checkValidity();
-    _emitEvent('model', input);
+    _emitEvent(input, 'model');
   }
 
   input.addEventListener( is_android ? 'keyup' : 'input' , onInput, options.use_capture );
