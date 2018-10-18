@@ -71,7 +71,7 @@ export default function inputMask (pattern) {
         plain += letter;
       } else return {
         expected: {
-          index: i,
+          index: t - 1,
           match: token.source.replace(/^\[|\]$/g, ''),
         },
         value: is_deleting ? result_no_tail : result,
