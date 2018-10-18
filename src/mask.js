@@ -33,6 +33,10 @@ export default function inputMask (pattern) {
         if( !aux_re.filterStr ) throw new Error('filter \'' + aux_parts[0] + '\' not defined');
 
         tokens.push(aux_re);
+      } else {
+        aux_re = new RegExp('[' + token + ']');
+        aux_re.filterStr = _noopValue;
+        tokens.push(aux_re);
       }
 
     } else if( token !== '' ) _push.apply(tokens, token.split(''));
