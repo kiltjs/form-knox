@@ -70,7 +70,10 @@ export default function inputMask (pattern) {
         result_no_tail = result;
         plain += letter;
       } else return {
-        expected: token,
+        expected: {
+          index: i,
+          match: token.source.replace(/^\[|\]$/g, ''),
+        },
         value: is_deleting ? result_no_tail : result,
         plain: plain,
         filled: false,
