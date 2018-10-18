@@ -49,11 +49,11 @@ describe('nif', function () {
 
   it('should remove last separator (input + previousInput)', function () {
 
-    assert.strictEqual( nif('12345678', '12345678 ').value, '1234567' );
-    assert.strictEqual( nif('12345678', '12345678 ').filled, false );
+    assert.strictEqual( nif('12345678', '12345678 ').value, '1234567', '\'1234567 \'' );
+    assert.strictEqual( nif('12345678', '12345678 ').filled, false, 'filled' );
 
-    assert.strictEqual( nif('1234567', '12345678').value, '1234567' );
-    assert.strictEqual( nif('1234567', '12345678').filled, false );
+    assert.strictEqual( nif('1234567', '12345678').value, '1234567', '\'1234567\'' );
+    assert.strictEqual( nif('1234567', '12345678').filled, false, 'filled' );
 
   });
 

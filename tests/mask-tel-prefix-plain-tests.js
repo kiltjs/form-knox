@@ -3,7 +3,7 @@
 import assert from 'assert';
 import inputMask from '../src/mask';
 
-describe('tel (plain)', function () {
+describe('tel prefix (plain)', function () {
 
   var tel = inputMask('+34 {9}{9}{9} {9}{9}{9} {9}{9}{9}');
 
@@ -15,15 +15,16 @@ describe('tel (plain)', function () {
 
   it('should return formatted telephone (flat input)', function () {
 
+    assert.strictEqual( tel('123456789').value, '+34 123 456 789' );
     assert.strictEqual( tel('123456789').plain, '123456789' );
-    assert( tel('123456789').filled );
+    assert.strictEqual( tel('123456789').filled, true, 'filled' );
 
   });
 
   it('should return formatted telephone (formatted input)', function () {
 
     assert.strictEqual( tel('123 456 789').plain, '123456789' );
-    assert( tel('123 456 789').filled );
+    assert.strictEqual( tel('123 456 789').filled, true, 'filled' );
 
   });
 
