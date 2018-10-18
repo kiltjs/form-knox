@@ -20,7 +20,7 @@ build: install test
 	mkdir -p dist
 
 	$(shell npm bin)/babel src --out-dir dist
-	$(shell npm bin)/rollup src/bundle.js -c rollup.config.js --output.format umd --output.file dist/bundle.umd.js -n formKnox
+	$(shell npm bin)/rollup src/bundle.js --output.format umd --output.file dist/bundle.umd.js -n formKnox
 
 
 # publish.release:
