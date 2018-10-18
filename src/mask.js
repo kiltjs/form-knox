@@ -71,7 +71,7 @@ export default function inputMask (pattern) {
         plain += letter;
       } else return {
         expected: token,
-        value: result,
+        value: is_deleting ? result_no_tail : result,
         plain: plain,
         filled: false,
       };
