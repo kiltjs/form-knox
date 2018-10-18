@@ -61,7 +61,7 @@ export default function inputMask (pattern) {
         token = tokens[t++];
       }
 
-      if( !token ) break;
+      if( !token || letter === undefined ) break;
 
       letter = token.filterStr(letter);
 
