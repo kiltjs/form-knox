@@ -109,9 +109,9 @@ function initInput (input, options) {
   setTimeout(checkValidity, 0);
 
   function onInput () {
+    applyMask();
     if( input.value === previous_value ) return;
     custom_error = null;
-    applyMask();
     previous_value = input.value;
     checkValidity();
     _emitEvent(input, 'model');
