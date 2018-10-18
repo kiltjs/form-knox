@@ -9,7 +9,10 @@ describe('tel prefix', function () {
 
   it('should return empty telephone (empty input)', function () {
 
-    assert.strictEqual( tel('').value, '+34 ' );
+    assert.strictEqual( tel('').value, '' );
+    assert.strictEqual( tel('+').value, '+34 ' );
+    assert.strictEqual( tel('+34 55').value, '+34 55' );
+    assert.strictEqual( tel('+34 55').plain, '55' );
 
   });
 

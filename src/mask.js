@@ -47,6 +47,8 @@ export default function inputMask (pattern) {
         plain = '',
         is_deleting = false;
 
+    if( !value ) return { value: '', plain: '', filled: false };
+
     if( typeof previous_value === 'string' && previous_value.indexOf(value) === 0 ) is_deleting = true;
 
     for( var i = 0, t = 0, n = letters.length, letter, token ; i < n ; i++ ) {
