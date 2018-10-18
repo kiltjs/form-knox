@@ -115,8 +115,8 @@ function initInput (input, options) {
     applyMask();
     if( input.value === previous_value ) return;
     custom_error = null;
-    previous_value = input.value;
     checkValidity();
+    previous_value = input.value;
     _emitEvent(input, 'model');
   }
 
