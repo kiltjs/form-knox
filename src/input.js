@@ -61,10 +61,8 @@ function initInput (input, options) {
     try {
       result = _inputMask(input.value, previous_value);
     } catch (err) {
-      if( typeof err !== 'string' ) throw err;
-      custom_error = err;
-      checkValidity();
-      return;
+      if( typeof err === 'string' ) return err;
+      throw err;
     }
 
     if( !result && result !== '' ) return;
@@ -100,8 +98,10 @@ function initInput (input, options) {
 
   if( options.onChange instanceof Function ) listeners.change.push(options.onChange);
 
-  function checkValidity () {
-    var previous_error_key;
+  function checkValidity (_custom_error) {
+    var previous_error_key = error_key;
+    if( _custom_error ) custom_error = _custom_error;
+
     error_key = getErrorKey();
     var custom_error_message = options.getErrorMessage && options.getErrorMessage(error_key);
     if( custom_error_message ) input.setCustomValidity(custom_error_message);
@@ -112,11 +112,11 @@ function initInput (input, options) {
   setTimeout(checkValidity, 0);
 
   function onInput () {
-    applyMask();
+    var mask_error = applyMask();
     if( input.value === previous_value ) return;
-    custom_error = null;
-    checkValidity();
     previous_value = input.value;
+    custom_error = null;
+    checkValidity(mask_error);
     _emitEvent(input, 'model');
   }
 
@@ -135,9 +135,8 @@ function initInput (input, options) {
       // checkValidity();
       return component;
     },
-    setError: function (error_key) {
-      custom_error = error_key;
-      checkValidity();
+    setError: function (_error_key) {
+      checkValidity(_error_key);
       return component;
     },
     setRequired: function (required) {
