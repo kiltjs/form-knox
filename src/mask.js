@@ -11,7 +11,7 @@ function _noopValue (value) { return value; }
 var number_RE = {};
 function _getNumberRE (num) {
   if( !number_RE[num] ) {
-    number_RE[num] = new RegExp('[0-' + num + ']');
+    number_RE[num] = new RegExp('[' + (num === '9' ? '0-' : '') + num + ']');
     number_RE[num].filterStr = _noopValue;
   }
   return number_RE[num];
