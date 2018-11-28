@@ -105,7 +105,7 @@ function initInput (input, options) {
     error_key = getErrorKey();
     var custom_error_message = options.getErrorMessage && options.getErrorMessage(error_key);
     if( custom_error_message ) input.setCustomValidity(custom_error_message);
-    if( input.value !== previous_value || error_key !== previous_error_key ) {
+    if( previous_value !== input.value || error_key !== previous_error_key ) {
       runListeners(listeners.change, [plainValue(input.value), mask_filled, error_key, previous_value, custom_error_message || validation_message ], input);
     }
   }
@@ -114,13 +114,14 @@ function initInput (input, options) {
   function onInput () {
     var mask_error = applyMask();
     if( input.value === previous_value ) return;
-    previous_value = input.value;
     custom_error = null;
     checkValidity(mask_error);
+    previous_value = input.value;
     _emitEvent(input, 'model');
   }
 
-  input.addEventListener( is_android ? 'keyup' : 'input' , onInput, options.use_capture );
+  input.addEventListener('input', onInput, options.use_capture );
+  input.addEventListener('keyup', onInput, options.use_capture ); // for Android
   input.addEventListener('change' , onInput, options.use_capture );
   input.addEventListener('blur' , onInput, options.use_capture );
 
