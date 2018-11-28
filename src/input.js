@@ -112,6 +112,7 @@ function initInput (input, options) {
   setTimeout(checkValidity, 0);
 
   function onInput () {
+    if( input.value === previous_value ) return;
     var mask_error = applyMask();
     if( input.value === previous_value ) return;
     custom_error = null;
