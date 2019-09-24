@@ -168,6 +168,9 @@ function initInput (input, options) {
       else input.removeEventListener(event_name, listener, use_capture);
       return component;
     },
+    emit: function (event_name, args, this_arg) {
+      if( listeners[event_name] ) runListeners(listeners[event_name], args, this_arg);
+    },
     checkValidity: checkValidity,
     unbind: function () {
       input.removeEventListener( is_android ? 'keyup' : 'input' , onInput, options.use_capture );
